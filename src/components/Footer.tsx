@@ -5,15 +5,15 @@ export const Footer = () => {
         <div className="mb-12 grid grid-cols-1 gap-10 md:grid-cols-3">
           {/* Logo & Tagline */}
           <div className="md:col-span-1">
-            <h3 className="mb-3 font-serif text-2xl font-black text-yellow-400">Gold Nexus</h3>
+            <h3 className="mb-3 font-sans text-2xl font-black text-yellow-400">Gold Nexus</h3>
             <p className="font-sans text-sm leading-relaxed text-neutral-400">
-              The trusted destination for premium gold investment.
+              The Global Gateway for Gold & Luxury.
             </p>
           </div>
 
           {/* Company */}
           <div>
-            <h4 className="mb-4 font-serif text-sm font-bold uppercase tracking-wider text-yellow-400">
+            <h4 className="mb-4 font-sans text-sm font-bold uppercase tracking-wider text-yellow-400">
               Company
             </h4>
             <ul className="space-y-2">
@@ -38,7 +38,7 @@ export const Footer = () => {
 
           {/* Support */}
           <div>
-            <h4 className="mb-4 font-serif text-sm font-bold uppercase tracking-wider text-yellow-400">
+            <h4 className="mb-4 font-sans text-sm font-bold uppercase tracking-wider text-yellow-400">
               Support
             </h4>
             <ul className="space-y-2">
@@ -72,24 +72,22 @@ export const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-neutral-700 pt-8">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex flex-col gap-6">
+            <a
+                href="#"
+                className="font-sans text-sm text-neutral-500 transition-colors hover:text-neutral-300"
+            >
+              Privacy Policy
+            </a>
+            <a
+                href="#"
+                className="font-sans text-sm text-neutral-500 transition-colors hover:text-neutral-300"
+            >
+              Terms of Service
+            </a>
             <p className="font-sans text-sm text-neutral-500">
               © {new Date().getFullYear()} Gold Nexus. All rights reserved.
             </p>
-            <div className="flex items-center gap-6">
-              <a
-                href="#"
-                className="font-sans text-sm text-neutral-500 transition-colors hover:text-neutral-300"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="font-sans text-sm text-neutral-500 transition-colors hover:text-neutral-300"
-              >
-                Terms of Service
-              </a>
-            </div>
           </div>
         </div>
       </div>

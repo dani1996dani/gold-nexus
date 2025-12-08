@@ -42,7 +42,7 @@ export const HighlightedProducts = () => {
         {/* Section Header */}
         <div className="mb-14 text-center">
           <h2 className="mb-4 font-serif text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">
-            Featured Gold Products
+            Featured Gold&nbsp;Products
           </h2>
           <p className="mx-auto max-w-xl font-sans text-muted-foreground">
             Investment-grade gold available for instant purchase.
