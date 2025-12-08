@@ -41,7 +41,7 @@ export const HighlightedProducts = () => {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="mb-14 text-center">
-          <h2 className="mb-4 font-serif text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">
+          <h2 className="mb-4 font-serif text-3xl font-medium text-foreground sm:text-4xl md:text-5xl">
             Featured Gold&nbsp;Products
           </h2>
           <p className="mx-auto max-w-xl font-sans text-muted-foreground">

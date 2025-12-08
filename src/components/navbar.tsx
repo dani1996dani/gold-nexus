@@ -39,7 +39,7 @@ export const Navbar = () => {
               </Button>
               <button className="relative rounded-full p-2 transition-colors hover:bg-gray-100">
                 <ShoppingCart className="h-5 w-5 text-[#1a202c]" />
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-tl from-[#D4AF37] to-[#F7EF8A] text-xs font-semibold text-gray-800">
+                <span className="bg-gold-shimmer absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold text-gray-800">
                   0
                 </span>
               </button>

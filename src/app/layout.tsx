@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import localFont from 'next/font/local'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -11,6 +12,12 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 });
+
+const tiempos = localFont({
+  src: './fonts/tiempos.woff2',
+  display: 'swap',
+  variable: '--font-tiempos-serif', // This defines the CSS variable
+})
 
 export const metadata: Metadata = {
   title: 'Gold Nexus',
@@ -24,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${tiempos.variable} antialiased`}>{children}</body>
     </html>
   );
 }

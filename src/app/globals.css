@@ -193,10 +193,6 @@
     /* Cream */
     --cream: 40 33% 98%;
 
-    /* Typography */
-    --font-serif: 'Playfair Display', Georgia, serif;
-    --font-sans: 'Inter', system-ui, sans-serif;
-
     /* Shadows */
     --shadow-subtle: 0 2px 8px -2px hsla(0, 0%, 0%, 0.08);
     --shadow-card: 0 4px 20px -4px hsla(0, 0%, 0%, 0.1);
@@ -309,4 +305,8 @@
 
 .bg-radial-gold {
   background-image: radial-gradient(circle, #FCF8B8, #F4D361);
+}
+
+.bg-gold-shimmer {
+  background: var(--gold-shimmer);
 }
