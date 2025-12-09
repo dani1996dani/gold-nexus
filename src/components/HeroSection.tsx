@@ -32,7 +32,7 @@ const HeroSection = () => {
 
         <div className="animate-fade-in opacity-0" style={{ animationDelay: '0.6s' }}>
           <Link href="/marketplace">
-            <Button variant="gold" size="xl" className="rounded-sm">
+            <Button variant="gold" size="xl" className="rounded-sm cursor-pointer">
               View Live Market
             </Button>
           </Link>
