@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const HeroSection = () => {
   const heroImage = '/hero-image.webp';
@@ -16,19 +17,25 @@ const HeroSection = () => {
       {/* Content */}
       <div className="container relative z-10 mx-auto px-4 text-center">
         <h1
-          className="mb-6 drop-shadow-gray-900 drop-shadow-2xl animate-fade-in font-serif text-4xl font-medium leading-tight text-white opacity-0 sm:text-5xl md:text-6xl lg:text-7xl"
+          className="drop-shadow-gray-900 mb-6 animate-fade-in font-serif text-4xl font-medium leading-tight text-white opacity-0 drop-shadow-2xl sm:text-5xl md:text-6xl lg:text-7xl"
           style={{ animationDelay: '0.2s' }}
-        >Direct Market&nbsp;Access to Physical&nbsp;Gold</h1>
+        >
+          Direct Market&nbsp;Access to Physical&nbsp;Gold
+        </h1>
 
         <p
           className="mx-auto mb-10 max-w-2xl animate-fade-in font-sans text-lg text-white/80 opacity-0 sm:text-xl"
           style={{ animationDelay: '0.4s' }}
         >
-            Buy, sell, and secure investment-grade assets with instant global liquidity.
+          Buy, sell, and secure investment-grade assets with instant global liquidity.
         </p>
 
         <div className="animate-fade-in opacity-0" style={{ animationDelay: '0.6s' }}>
-          <Button variant="gold" size="xl" className="rounded-sm">View Live Market</Button>
+          <Link href="/marketplace">
+            <Button variant="gold" size="xl" className="rounded-sm">
+              View Live Market
+            </Button>
+          </Link>
         </div>
       </div>
 

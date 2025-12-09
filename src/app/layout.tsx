@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import localFont from 'next/font/local'
+import localFont from 'next/font/local';
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/Footer';
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,7 +20,7 @@ const tiempos = localFont({
   src: './fonts/tiempos.woff2',
   display: 'swap',
   variable: '--font-tiempos-serif', // This defines the CSS variable
-})
+});
 
 export const metadata: Metadata = {
   title: 'Gold Nexus',
@@ -31,7 +34,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${tiempos.variable} antialiased`}>{children}</body>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${tiempos.variable} antialiased`}
+      >
+        <NuqsAdapter>
+          <Navbar />
+          {children}
+          <Footer />
+        </NuqsAdapter>
+      </body>
     </html>
   );
 }
