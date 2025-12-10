@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
 import { GoldTicker } from '@/components/GoldTicker';
 import Link from 'next/link';
+import {ShoppingCartSheet} from "@/components/cart/shopping-cart-sheet";
 
 export const Navbar = () => {
   return (
@@ -42,12 +42,7 @@ export const Navbar = () => {
                   Login
                 </Button>
               </Link>
-              <button className="relative rounded-full p-2 transition-colors hover:bg-gray-100">
-                <ShoppingCart className="h-5 w-5 text-[#1a202c]" />
-                <span className="bg-gold-shimmer absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold text-gray-800">
-                  0
-                </span>
-              </button>
+              <ShoppingCartSheet />
             </div>
           </div>
         </div>
