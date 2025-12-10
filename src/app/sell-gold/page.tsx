@@ -17,7 +17,7 @@ export default function SellGoldPage() {
     <div className="min-h-screen w-full bg-[#F9F9F9] px-4 py-12 sm:px-6 lg:py-20">
       <main className="mx-auto max-w-2xl">
         <div className="text-center">
-          <h1 className="font-serif text-4xl font-bold text-black sm:text-5xl">Sell Your Gold</h1>
+          <h1 className="font-serif text-4xl font-medium text-black sm:text-5xl">Sell Your Gold</h1>
           <p className="mx-auto mt-4 max-w-xl text-neutral-600">
             Submit your gold details below and our specialists will provide you with a competitive
             quote shortly.

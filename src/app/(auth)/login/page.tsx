@@ -10,7 +10,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen w-full items-center justify-center bg-[#F9F9F9] px-4 md:px-0">
       <Card className="w-full max-w-sm rounded-sm border-neutral-300 bg-white shadow-none">
         <CardHeader className="text-center">
-          <CardTitle className="font-serif text-3xl tracking-tight">Welcome Back</CardTitle>
+          <CardTitle className="font-serif text-3xl tracking-tight font-medium">Welcome Back</CardTitle>
           <CardDescription className="pt-2">
             Sign in to access your Gold Nexus account.
           </CardDescription>

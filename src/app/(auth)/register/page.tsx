@@ -11,7 +11,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen w-full items-center justify-center bg-[#F9F9F9] px-4 py-12 md:px-0">
       <Card className="w-full max-w-sm rounded-sm border-neutral-300 bg-white shadow-none">
         <CardHeader className="text-center">
-          <CardTitle className="font-serif text-3xl tracking-tight">Create an Account</CardTitle>
+          <CardTitle className="font-serif text-3xl tracking-tight font-medium">Create an Account</CardTitle>
           <CardDescription className="pt-2">
             Join Gold Nexus to buy and sell gold assets.
           </CardDescription>
