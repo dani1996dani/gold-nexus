@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
   return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-[#F9F9F9]">
+      <div className="flex min-h-screen w-full px-4 md:px-0 items-center justify-center bg-[#F9F9F9]">
         <Card className="w-full max-w-sm border-neutral-300 rounded-sm bg-white shadow-none">
           <CardHeader className="text-center">
             <CardTitle className="font-serif text-3xl tracking-tight">
