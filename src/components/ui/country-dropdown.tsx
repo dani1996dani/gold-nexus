@@ -38,19 +38,21 @@ export interface Country {
 interface CountryDropdownProps {
   options?: Country[];
   onChange?: (country: Country) => void;
-  defaultValue?: string;
+  value: Country;
   disabled?: boolean;
   placeholder?: string;
   slim?: boolean;
 }
 
+const hardcodedOptions = countries.all.filter(
+  (country: Country) => country.emoji && country.status !== 'deleted' && country.ioc !== 'PRK'
+);
+
 const CountryDropdownComponent = (
   {
-    options = countries.all.filter(
-      (country: Country) => country.emoji && country.status !== 'deleted' && country.ioc !== 'PRK'
-    ),
+    options = hardcodedOptions,
     onChange,
-    defaultValue = 'USA',
+    value = hardcodedOptions.find(x => x.alpha3 === "USA") || hardcodedOptions[0],
     disabled = false,
     placeholder = 'Select a country',
     slim = false,
@@ -59,27 +61,10 @@ const CountryDropdownComponent = (
   ref: React.ForwardedRef<HTMLButtonElement>
 ) => {
   const [open, setOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<Country | undefined>(undefined);
-
-  useEffect(() => {
-    if (defaultValue) {
-      const initialCountry = options.find((country) => country.alpha3 === defaultValue);
-      if (initialCountry) {
-        setSelectedCountry(initialCountry);
-      } else {
-        // Reset selected country if defaultValue is not found
-        setSelectedCountry(undefined);
-      }
-    } else {
-      // Reset selected country if defaultValue is undefined or null
-      setSelectedCountry(undefined);
-    }
-  }, [defaultValue, options]);
 
   const handleSelect = useCallback(
     (country: Country) => {
       console.log('🌍 CountryDropdown value: ', country);
-      setSelectedCountry(country);
       onChange?.(country);
       setOpen(false);
     },
@@ -94,20 +79,20 @@ const CountryDropdownComponent = (
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger ref={ref} className={triggerClasses} disabled={disabled} {...props}>
-        {selectedCountry ? (
+        {value ? (
           <div className="flex w-0 flex-grow items-center gap-2 overflow-hidden">
             <div className="inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-full">
-              <CircleFlag countryCode={selectedCountry.alpha2.toLowerCase()} height={20} />
+              <CircleFlag countryCode={value.alpha2.toLowerCase()} height={20} />
             </div>
             {slim === false && (
               <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {selectedCountry.name}
+                {value.name}
               </span>
             )}
           </div>
         ) : (
           <span>
-            {slim === false ? placeholder || setSelectedCountry.name : <Globe size={20} />}
+            {slim === false ? placeholder : <Globe size={20} />}
           </span>
         )}
         <ChevronDown size={16} />
@@ -143,7 +128,7 @@ const CountryDropdownComponent = (
                     <CheckIcon
                       className={cn(
                         'ml-auto h-4 w-4 shrink-0',
-                        option.name === selectedCountry?.name ? 'opacity-100' : 'opacity-0'
+                        option.name === value.name ? 'opacity-100' : 'opacity-0'
                       )}
                     />
                   </CommandItem>

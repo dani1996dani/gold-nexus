@@ -152,3 +152,4 @@ vcs.xml
 
 
 /src/generated/prisma
+*.pem*
