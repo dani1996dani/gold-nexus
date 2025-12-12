@@ -12,7 +12,11 @@
     "prisma:gen": "npx prisma generate",
     "// dont use this when you have data in the db! - prisma:push": "npx prisma db push",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:studio": "npx prisma studio"
+    "prisma:studio": "npx prisma studio",
+    "postinstall": "prisma generate"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
