@@ -13,6 +13,7 @@
     "// dont use this when you have data in the db! - prisma:push": "npx prisma db push",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
+    "db:seed": "npx prisma db seed",
     "postinstall": "prisma generate"
   },
   "prisma": {

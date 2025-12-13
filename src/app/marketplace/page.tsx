@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useQueryStates, parseAsArrayOf, parseAsString } from 'nuqs';
-import { Footer } from '@/components/Footer';
 import { ProductCard } from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -15,9 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { mockProducts, Product } from '@/data/mockProducts';
+import { Product } from '@/generated/prisma/client';
 
 export default function MarketplacePage() {
+  // --- STATE MANAGEMENT ---
+  const [allProducts, setAllProducts] = useState<Product[]>([]); // To hold the original data from the API
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [tempCategories, setTempCategories] = useState<string[]>([]);
 
@@ -26,36 +29,64 @@ export default function MarketplacePage() {
     sortBy: parseAsString.withDefault('price-asc'),
   });
 
+  // --- DATA FETCHING ---
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) {
+          throw new Error('Failed to fetch product');
+        }
+        const data: Product[] = await res.json();
+        setAllProducts(data);
+      } catch (err: unknown) {
+        // @ts-expect-error an error bro.
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // --- FILTERING AND SORTING LOGIC ---
   const filteredProducts = useMemo(() => {
-    let products: Product[] = [...mockProducts];
+    let products: Product[] = [...allProducts];
+
     if (query.categories.length > 0) {
       products = products.filter((p) => query.categories.includes(p.category));
     }
     products.sort((a, b) => {
-      const priceA = parseFloat(a.price.replace(/[^0-9.-]+/g, ''));
-      const priceB = parseFloat(b.price.replace(/[^0-9.-]+/g, ''));
+
+      const priceA = a.price as unknown as number;
+      const priceB = b.price as unknown as number;
       if (query.sortBy === 'price-desc') return priceB - priceA;
       return priceA - priceB;
     });
     return products;
-  }, [query.categories, query.sortBy]);
+  }, [query.categories, query.sortBy, allProducts]); // Add allProducts as a dependency
 
   const handleCategoryChange = (category: string) => {
     setTempCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
   };
-
   const applyFilters = () => {
     setQuery({ categories: tempCategories });
-    setIsSheetOpen(false); // Close sheet on apply
+    setIsSheetOpen(false);
   };
-
   const clearFilters = () => {
     setTempCategories([]);
     setQuery({ categories: [] });
-    setIsSheetOpen(false); // Close sheet on clear
+    setIsSheetOpen(false);
   };
+
+  if (loading) {
+    return <div className="p-12 text-center">Loading live market...</div>;
+  }
+  if (error) {
+    return <div className="p-12 text-center text-red-500">Error: {error}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -69,7 +100,6 @@ export default function MarketplacePage() {
               onClear={clearFilters}
             />
           </aside>
-
           <section className="w-full lg:w-9/12">
             <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
               <div>
@@ -78,7 +108,6 @@ export default function MarketplacePage() {
                   Showing {filteredProducts.length} assets
                 </p>
               </div>
-
               <div className="flex w-full items-center gap-4 md:w-auto">
                 <div className="lg:hidden">
                   <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -100,7 +129,6 @@ export default function MarketplacePage() {
                     </SheetContent>
                   </Sheet>
                 </div>
-
                 <div className="w-full md:w-[200px]">
                   <Select
                     value={query.sortBy}
@@ -117,16 +145,11 @@ export default function MarketplacePage() {
                 </div>
               </div>
             </div>
-
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
               {filteredProducts.map((product) => (
                 <ProductCard
+                  product={product}
                   key={product.id}
-                  name={product.name}
-                  weight={product.weight}
-                  purity={product.purity}
-                  price={product.price}
-                  image={product.image}
                 />
               ))}
             </div>

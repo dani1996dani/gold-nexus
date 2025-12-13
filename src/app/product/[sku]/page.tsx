@@ -1,30 +1,36 @@
-'use client';
-
-import { Button } from '@/components/ui/button';
+import { notFound } from 'next/navigation';
+import { Product } from '@/generated/prisma/client';
 import Image from 'next/image';
-import oneOz from '@/assets/mocks/1-oz.png';
+import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { formatCurrency } from '@/lib/utils/formatCurrency';
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  // In a real app, you would fetch this data based on params.id
-  const productData = {
-    sku: 'GNB-PS-1OZ',
-    name: '1 oz PAMP Suisse Gold Bar',
-    description:
-      'The PAMP Suisse 1 oz gold bar represents the pinnacle of Swiss craftsmanship. Each bar is individually assayed and comes sealed in its original CertiPAMP™ packaging, featuring the iconic Lady Fortuna design that has become synonymous with excellence in precious metals.',
-    price: '$2,689.50',
-    weight: '1 oz t (31.1g)',
-    karat: '24k',
-    category: 'Gold Bar',
-    vendorName: 'PAMP Suisse',
-    purity: '99.99%',
-    dimensions: '41mm x 24mm x 2mm',
-  };
+async function getProduct(sku: string): Promise<Product | null> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const res = await fetch(`${baseUrl}/api/products/${sku}`, {
+    cache: 'no-store',
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('Failed to fetch product');
+  return res.json();
+}
+
+interface ProductDetailPageProps {
+  params: { sku: string };
+}
+
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const { sku } = await params;
+  const product = await getProduct(sku);
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <main className="container mx-auto px-4 py-12">
@@ -32,14 +38,21 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         {/* LEFT COLUMN: IMAGE */}
         <div className="flex items-start justify-center">
           <div className="w-full max-w-md overflow-hidden rounded-lg border border-border/50 bg-card p-4 shadow-subtle">
-            <Image src={oneOz} alt={productData.name} className="h-full w-full object-contain" />
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              width={500}
+              height={500}
+              className="h-full w-full object-contain"
+            />
           </div>
         </div>
 
         {/* RIGHT COLUMN: DETAILS */}
         <div>
-          <h1 className="font-serif text-4xl font-medium text-foreground">{productData.name}</h1>
-          <p className="mt-4 text-muted-foreground">{productData.description}</p>
+          <h1 className="font-serif text-4xl font-medium text-foreground">{product.name}</h1>
+          {/* Use the description from the database */}
+          <p className="mt-4 text-muted-foreground">{product.description}</p>
 
           {/* SPECIFICATIONS BOX */}
           <div className="mt-8 rounded-lg bg-secondary/30 p-6">
@@ -47,21 +60,19 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             <dl className="mt-4 text-sm">
               <div className="flex justify-between border-b border-border/30 py-3">
                 <dt className="text-muted-foreground">Purity</dt>
-                <dd className="font-semibold text-foreground">
-                  {productData.purity} ({productData.karat})
-                </dd>
+                <dd className="font-semibold text-foreground">{product.karat}</dd>
               </div>
               <div className="flex justify-between border-b border-border/30 py-3">
                 <dt className="text-muted-foreground">Weight</dt>
-                <dd className="font-semibold text-foreground">{productData.weight}</dd>
+                <dd className="font-semibold text-foreground">{product.weight}</dd>
               </div>
               <div className="flex justify-between border-b border-border/30 py-3">
                 <dt className="text-muted-foreground">Mint / Vendor</dt>
-                <dd className="font-semibold text-foreground">{productData.vendorName}</dd>
+                <dd className="font-semibold text-foreground">{product.vendorName}</dd>
               </div>
               <div className="flex justify-between pt-3">
                 <dt className="text-muted-foreground">SKU</dt>
-                <dd className="font-semibold text-foreground">{productData.sku}</dd>
+                <dd className="font-semibold text-foreground">{product.sku}</dd>
               </div>
             </dl>
           </div>
@@ -69,7 +80,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           {/* PRICE & CTA */}
           <div className="mt-8">
             <p className="text-xs uppercase text-muted-foreground">Live Ask Price</p>
-            <p className="font-sans text-5xl font-bold text-foreground">{productData.price}</p>
+            <p className="font-sans text-5xl font-bold text-foreground">
+              {formatCurrency(Number(product.price))}
+            </p>
             <Button size="lg" className="mt-6 w-full font-bold">
               Add to Order
             </Button>
@@ -77,7 +90,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         </div>
       </div>
 
-      {/* ACCORDION SECTION (Replaces Tabs) */}
+      {/* ACCORDION SECTION */}
       <div className="mt-16 border-t border-border/50 pt-12">
         <Accordion
           type="single"
@@ -90,13 +103,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               Full Product Description
             </AccordionTrigger>
             <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-              <p>{productData.description}</p>
-              <p className="mt-4">
-                This investment-grade gold bar is manufactured to the highest standards of the
-                London Bullion Market Association (LBMA). Each bar undergoes rigorous quality
-                control to ensure it meets the exacting specifications required for international
-                trade and investment portfolios.
-              </p>
+              {/* Use the database description here as well */}
+              <p>{product.description}</p>
             </AccordionContent>
           </AccordionItem>
 
@@ -110,16 +118,13 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 <dl className="mt-4 text-sm">
                   <div className="flex justify-between py-2">
                     <dt>Gross Weight</dt>
-                    <dd>{productData.weight}</dd>
+                    <dd>{product.weight || "-"}</dd>
                   </div>
                   <div className="flex justify-between py-2">
                     <dt>Fineness</dt>
-                    <dd>{productData.purity}</dd>
+                    <dd>{product.karat || "-"}</dd>
                   </div>
-                  <div className="flex justify-between py-2">
-                    <dt>Dimensions</dt>
-                    <dd>{productData.dimensions}</dd>
-                  </div>
+                  {/* Removed the 'Dimensions' row */}
                 </dl>
               </div>
               <div className="rounded-lg border border-border/50 bg-secondary/50 p-6">
@@ -127,11 +132,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 <dl className="mt-4 text-sm">
                   <div className="flex justify-between py-2">
                     <dt>Manufacturer</dt>
-                    <dd>{productData.vendorName}</dd>
-                  </div>
-                  <div className="flex justify-between py-2">
-                    <dt>LBMA Approved</dt>
-                    <dd>Yes</dd>
+                    <dd>{product.vendorName || '-'}</dd>
                   </div>
                   <div className="flex justify-between py-2">
                     <dt>Serial Number</dt>

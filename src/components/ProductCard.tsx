@@ -1,24 +1,25 @@
 import { Button } from '@/components/ui/button';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
+import { Product } from '@/generated/prisma/client';
+import { formatCurrency } from '@/lib/utils/formatCurrency';
 
 interface ProductCardProps {
-  name: string;
-  weight: string;
-  price: string;
-  purity: string;
-  image: string | StaticImageData;
+  product: Product;
 }
 
-export const ProductCard = ({ name, weight, price, purity, image }: ProductCardProps) => {
+export const ProductCard = ({ product }: ProductCardProps) => {
+  const { name, weight, price, karat, imageUrl, sku } = product;
   return (
     //   todo: add real id here when time comes. dummy id for now.
     <div className="group overflow-hidden rounded-lg border border-border/50 bg-card shadow-subtle transition-all duration-300 hover:shadow-card">
       {/* Image Container */}
-      <Link href={`/products/1`} passHref>
+      <Link href={`/product/${sku}`} passHref>
         <div className="flex aspect-square items-center justify-center overflow-hidden bg-secondary/50 p-6">
           <Image
-            src={image}
+            src={imageUrl}
+            width={200}
+            height={200}
             alt={name}
             className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
           />
@@ -30,7 +31,7 @@ export const ProductCard = ({ name, weight, price, purity, image }: ProductCardP
         {/* Metadata Row (Purity & Weight) */}
         <div className="mb-3 flex items-center justify-between border-b border-border/40 pb-3">
           <span className="rounded-sm bg-secondary px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/80">
-            {purity}
+            {karat}
           </span>
           {/* THE WEIGHT LABEL FIX */}
           <span className="font-sans text-xs font-medium text-muted-foreground">
@@ -46,7 +47,9 @@ export const ProductCard = ({ name, weight, price, purity, image }: ProductCardP
             <span className="text-[10px] font-medium uppercase text-muted-foreground">
               Live Ask
             </span>
-            <span className="font-sans text-xl font-bold text-foreground">{price}</span>
+            <span className="font-sans text-xl font-bold text-foreground">
+              {formatCurrency(Number(price))}
+            </span>
           </div>
           <Button
             variant="dark"
