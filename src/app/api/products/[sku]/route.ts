@@ -3,13 +3,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/../lib/db';
 
-interface Params {
-  params: { sku: string };
-}
-
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(request: NextRequest, context: { params: Promise<{ sku: string }> }) {
   try {
-    const { sku } = await params;
+    const { sku } = await context.params;
 
     if (!sku) {
       return NextResponse.json({ error: 'Product SKU is required' }, { status: 400 });

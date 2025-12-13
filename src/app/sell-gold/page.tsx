@@ -10,7 +10,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Upload } from 'lucide-react';
-import { CountryDropdown } from '@/components/ui/country-dropdown'; // Icon for the uploader
+import { CountryDropdown } from '@/components/ui/country-dropdown';
+import { countries } from 'country-data-list'; // Icon for the uploader
 
 export default function SellGoldPage() {
   return (
@@ -58,7 +59,7 @@ export default function SellGoldPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="country">Country</Label>
-                  <CountryDropdown />
+                  <CountryDropdown value={countries.all[0]}/>
                 </div>
               </div>
 

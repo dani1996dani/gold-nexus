@@ -1,41 +1,41 @@
+// components/HighlightedProducts.tsx
+
 import { ProductCard } from './ProductCard';
-import goldCoinEagle from '@/assets/mocks/coin.png';
-import oneOz from '@/assets/mocks/1-oz.png';
-import tenOz from '@/assets/mocks/10-oz.png';
-import oneKilo from '@/assets/mocks/1-kg.png';
+import { Product } from '@/generated/prisma/client';
 
-const products = [
-  {
-    name: '1 oz Gold Bar',
-    weight: '1 oz',
-    price: '$2,689',
-    purity: '99.99% Pure',
-    image: oneOz,
-  },
-  {
-    name: '10 oz Gold Bar',
-    weight: '10 oz',
-    price: '$26,450',
-    purity: '99.99% Pure',
-    image: tenOz,
-  },
-  {
-    name: '1 kg Gold Bar',
-    weight: '32.15 oz',
-    price: '$84,750',
-    purity: '99.99% Pure',
-    image: oneKilo,
-  },
-  {
-    name: 'Gold Eagle Coin',
-    weight: '1 oz',
-    price: '$2,795',
-    purity: '91.67% Pure',
-    image: goldCoinEagle,
-  },
-];
+// This is our server-side data fetching function
+async function getFeaturedProducts(): Promise<Product[]> {
+  try {
+    // We must use an absolute URL for fetches within Server Components
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const res = await fetch(`${baseUrl}/api/products`, {
+      cache: 'no-store', // Ensures we get fresh data on every request
+    });
 
-export const HighlightedProducts = () => {
+    if (!res.ok) {
+      console.error('Failed to fetch featured products');
+      return []; // Return an empty array on error to prevent the page from crashing
+    }
+
+    const allProducts: Product[] = await res.json();
+    // Return the first 4 products from the list (since the API sorts by newest)
+    return allProducts.slice(0, 4);
+  } catch (error) {
+    console.error('Error in getFeaturedProducts:', error);
+    return [];
+  }
+}
+
+// 1. Make the component an 'async' function
+export const HighlightedProducts = async () => {
+  // 2. Await the data directly inside the component
+  const products = await getFeaturedProducts();
+
+  // If there are no products, we can choose to render nothing for this section
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
     <section id="marketplace" className="bg-background py-20">
       <div className="container mx-auto px-4">
@@ -51,8 +51,10 @@ export const HighlightedProducts = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* 3. Map over the real, fetched products */}
           {products.map((product) => (
-            <ProductCard key={product.name} {...product} />
+            // Use the unique product.id for the key, which is more reliable than the name
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>

@@ -10,6 +10,7 @@ import { Lock } from 'lucide-react';
 import oneOz from '@/assets/mocks/1-oz.png';
 import goldCoinEagle from '@/assets/mocks/coin.png';
 import { CountryDropdown } from '@/components/ui/country-dropdown';
+import { countries } from 'country-data-list';
 
 const cartItems = [
   {
@@ -91,7 +92,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="country">Country</Label>
-                    <CountryDropdown />
+                    <CountryDropdown value={countries.all[0]}/>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
