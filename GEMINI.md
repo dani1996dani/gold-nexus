@@ -59,10 +59,10 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[x]` `GET /api/products/[sku]` for product detail page.
     - `[x]` `GET /api/users/me` for user profile page.
     - `[x]` Homepage "Featured Products" is dynamic.
-- `[ ]` **Functional Shopping Cart (Client-Side):**
-    - `[ ]` Zustand store created.
-    - `[ ]` "Add to Order" button works.
-    - `[ ]` Cart sheet reads from the store and is fully interactive (update quantity, remove).
+- `[x]` **Functional Shopping Cart (Client-Side):**
+    - `[x]` Zustand store created.
+    - `[x]` "Add to Order" button works.
+    - `[x]` Cart sheet reads from the store and is fully interactive (update quantity, remove).
 - `[ ]` **Create an Order (Checkout Process):**
     - `[ ]` Build `POST /api/orders/create` endpoint to save cart contents to the database.
 - `[ ]` **Conditional Navbar UI:**
