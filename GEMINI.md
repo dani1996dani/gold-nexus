@@ -87,4 +87,5 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - `[ ]` Stripe Checkout integration.
 - `[ ]` Stripe Webhook confirmation.
 - `[ ]` Transactional email flows (e.g., order confirmation).
+- `[ ]` Configure production cron job schedule (e.g., every 30 minutes).
 - `[ ]` Final production deployment hand-off.

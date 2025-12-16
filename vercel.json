@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/gold-price/update",
-      "schedule": "*/30 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
