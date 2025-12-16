@@ -81,9 +81,6 @@ export default function MarketplacePage() {
     setIsSheetOpen(false);
   };
 
-  if (loading) {
-    return <div className="p-12 text-center">Loading live market...</div>;
-  }
   if (error) {
     return <div className="p-12 text-center text-red-500">Error: {error}</div>;
   }
@@ -146,12 +143,13 @@ export default function MarketplacePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-              {filteredProducts.map((product) => (
-                <ProductCard
-                  product={product}
-                  key={product.id}
-                />
-              ))}
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <ProductCard product={product} key={product.id} />
+                ))
+              ) : (
+                <NoResultsFound onClear={clearFilters} />
+              )}
             </div>
           </section>
         </div>
@@ -159,3 +157,15 @@ export default function MarketplacePage() {
     </div>
   );
 }
+
+const NoResultsFound = ({ onClear }: { onClear: () => void }) => (
+  <div className="col-span-full mt-12 flex flex-col items-center justify-center text-center">
+    <h2 className="font-serif text-2xl font-medium">No Assets Found</h2>
+    <p className="mt-2 text-muted-foreground">
+      Try adjusting your filters or view all products.
+    </p>
+    <Button onClick={onClear} className="mt-6">
+      Clear Filters
+    </Button>
+  </div>
+);

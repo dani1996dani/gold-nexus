@@ -67,6 +67,10 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[x]` Build `POST /api/orders/create` endpoint to save cart contents to the database.
 - `[x]` **Conditional Navbar UI:**
     - `[x]` Show "My Account" / "Logout" if authenticated, otherwise show "Login".
+- `[ ]` **skeletons for pages with data**
+  - `[ ]` make a report on all pages that need a few secs to load and add loading state for them.
+- `[ ]` **marketplace filtering and sorting**
+  - `[ ]` support filtering and sorting the marketplace via the api.
 - `[ ]` **"Sell Gold" Form Submission (API):**
     - `[ ]` Build `POST /api/leads` endpoint and connect the frontend form.
 - `[ ]` **Admin Panel Backend APIs:**
