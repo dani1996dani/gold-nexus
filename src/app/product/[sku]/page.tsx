@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
+import { ProductPageActions } from '@/components/ProductPageActions';
 
 async function getProduct(sku: string): Promise<Product | null> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -78,15 +79,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           </div>
 
           {/* PRICE & CTA */}
-          <div className="mt-8">
-            <p className="text-xs uppercase text-muted-foreground">Live Ask Price</p>
-            <p className="font-sans text-5xl font-bold text-foreground">
-              {formatCurrency(Number(product.price))}
-            </p>
-            <Button size="lg" className="mt-6 w-full font-bold">
-              Add to Order
-            </Button>
-          </div>
+          <ProductPageActions product={product} />
         </div>
       </div>
 
