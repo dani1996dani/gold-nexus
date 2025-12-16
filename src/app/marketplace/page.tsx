@@ -14,16 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Product } from '@/generated/prisma/client';
+import { CATEGORIES } from '@/config/categories';
+import { Product, ProductCategory } from '@/generated/prisma/client';
 import MarketplaceLoading from '@/app/marketplace/loading';
 
 export default function MarketplacePage() {
   // --- STATE MANAGEMENT ---
-  const [allProducts, setAllProducts] = useState<Product[]>([]); // To hold the original data from the API
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [tempCategories, setTempCategories] = useState<string[]>([]);
+  const [tempCategories, setTempCategories] = useState<ProductCategory[]>([]);
 
   const [query, setQuery] = useQueryStates({
     categories: parseAsArrayOf(parseAsString).withDefault([]),
@@ -50,6 +51,14 @@ export default function MarketplacePage() {
     fetchProducts();
   }, []);
 
+  // Sync URL query state with temp state for the filter sidebar
+  useEffect(() => {
+    const validCategories = query.categories.filter((cat): cat is ProductCategory =>
+      CATEGORIES.some(c => c.value === cat)
+    );
+    setTempCategories(validCategories);
+  }, [query.categories]);
+
   // --- FILTERING AND SORTING LOGIC ---
   const filteredProducts = useMemo(() => {
     let products: Product[] = [...allProducts];
@@ -58,15 +67,16 @@ export default function MarketplacePage() {
       products = products.filter((p) => query.categories.includes(p.category));
     }
     products.sort((a, b) => {
+
       const priceA = a.price as unknown as number;
       const priceB = b.price as unknown as number;
       if (query.sortBy === 'price-desc') return priceB - priceA;
       return priceA - priceB;
     });
     return products;
-  }, [query.categories, query.sortBy, allProducts]); // Add allProducts as a dependency
+  }, [query.categories, query.sortBy, allProducts]);
 
-  const handleCategoryChange = (category: string) => {
+  const handleCategoryChange = (category: ProductCategory) => {
     setTempCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
@@ -84,7 +94,6 @@ export default function MarketplacePage() {
   if (loading) {
     return <MarketplaceLoading />;
   }
-
   if (error) {
     return <div className="p-12 text-center text-red-500">Error: {error}</div>;
   }

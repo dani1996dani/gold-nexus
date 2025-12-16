@@ -1,7 +1,7 @@
 // prisma/seed.ts
 
 import { prisma } from '@/lib/db';
-import { StockStatus } from '@/generated/prisma/enums';
+import { StockStatus, ProductCategory } from '@/generated/prisma/client';
 
 async function main() {
   console.log('Start seeding...');
@@ -17,7 +17,7 @@ async function main() {
       price: 2689.5,
       weight: '1 oz',
       karat: '24K',
-      category: 'Bar',
+      category: ProductCategory.BAR,
       imageUrl: 'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/1-oz.png',
       vendorName: 'PAMP Suisse',
       stockStatus: StockStatus.IN_STOCK,
@@ -30,7 +30,7 @@ async function main() {
       price: 2745.0,
       weight: '1 oz',
       karat: '22K',
-      category: 'Coin',
+      category: ProductCategory.COIN,
       imageUrl: 'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/coin.png',
       vendorName: 'US Mint',
       stockStatus: StockStatus.IN_STOCK,
@@ -43,7 +43,7 @@ async function main() {
       price: 84750.0,
       weight: '1 kg',
       karat: '24K',
-      category: 'Bar',
+      category: ProductCategory.BAR,
       imageUrl: 'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/1-kg.png',
       vendorName: 'Perth Mint',
       stockStatus: StockStatus.IN_STOCK,
@@ -56,7 +56,7 @@ async function main() {
       price: 24850.0,
       weight: '10 oz',
       karat: '24K',
-      category: 'Bar',
+      category: ProductCategory.BAR,
       imageUrl: 'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/10-oz.png',
       vendorName: 'Perth Mint',
       stockStatus: StockStatus.IN_STOCK,

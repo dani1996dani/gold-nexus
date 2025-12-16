@@ -36,6 +36,12 @@ enum LeadStatus {
   CLOSED
 }
 
+enum ProductCategory {
+  BAR
+  COIN
+  JEWELRY
+}
+
 // --- CORE MODELS ---
 model User {
   id          String   @id @default(uuid())
@@ -51,21 +57,21 @@ model User {
 }
 
 model Product {
-  id            String      @id @default(uuid())
-  sku           String      @unique
+  id            String          @id @default(uuid())
+  sku           String          @unique
   name          String
-  description   String?     @db.Text
-  price         Decimal     @db.Decimal(10, 2)
+  description   String?         @db.Text
+  price         Decimal         @db.Decimal(10, 2)
   weight        String
   karat         String
-  category      String
+  category      ProductCategory
   imageUrl      String
   vendorName    String
-  stockStatus   StockStatus @default(IN_STOCK)
-  isActive      Boolean     @default(true)
+  stockStatus   StockStatus     @default(IN_STOCK)
+  isActive      Boolean         @default(true)
   orderItems    OrderItem[]
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model Order {

@@ -78,7 +78,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[ ]` Order Management (View all orders).
     - `[ ]` Lead Management (View all leads).
 - `[ ]` **Live Gold Price Module (API):**
-    - `[ ]` Build `GET /api/gold-price` endpoint.
+    - `[ ]` Build `GET /api/gold-price` endpoint. https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD
 - `[ ]` **Editable User Profile:**
     - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
 

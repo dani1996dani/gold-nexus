@@ -1,9 +1,10 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { CATEGORIES, ProductCategory } from '@/config/categories';
 
 interface FilterSidebarProps {
-  categories: string[];
-  onCategoryChange: (category: string) => void;
+  categories: ProductCategory[];
+  onCategoryChange: (category: ProductCategory) => void;
   onApply: () => void;
   onClear: () => void;
 }
@@ -19,15 +20,15 @@ export const FilterSidebar = ({
       <div className="flex-grow">
         <h3 className="mb-6 font-serif text-xl font-medium">Asset Class</h3>
         <div className="space-y-3">
-          {['Gold Bars', 'Gold Coins', 'Investment Jewelry'].map((cat) => (
-            <div key={cat} className="flex items-center space-x-2">
+          {CATEGORIES.map((cat) => (
+            <div key={cat.value} className="flex items-center space-x-2">
               <Checkbox
-                id={cat}
-                checked={categories.includes(cat)}
-                onCheckedChange={() => onCategoryChange(cat)}
+                id={cat.value}
+                checked={categories.includes(cat.value)}
+                onCheckedChange={() => onCategoryChange(cat.value)}
               />
-              <label htmlFor={cat} className="cursor-pointer text-sm font-medium">
-                {cat}
+              <label htmlFor={cat.value} className="cursor-pointer text-sm font-medium">
+                {cat.label}
               </label>
             </div>
           ))}
