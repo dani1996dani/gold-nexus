@@ -6,7 +6,7 @@ import { headers } from 'next/headers';
 // It is protected by the 'x-vercel-cron-secret' header,
 // which is automatically sent by Vercel's cron service.
 export async function POST() {
-  const headersList = headers();
+  const headersList = await headers();
   const cronSecretHeader = headersList.get('x-vercel-cron-secret');
   const cronSecretEnv = process.env.CRON_SECRET;
 
