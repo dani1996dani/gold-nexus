@@ -75,10 +75,12 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
   - `[x]` Build `GET /api/gold-price` endpoint. https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD
 - `[x]` **"Sell Gold" Form Submission (API):**
     - `[x]` Build `POST /api/leads` endpoint and connect the frontend form.
-- `[ ]` **Admin Panel Backend APIs:**
+- `[ ]` **Admin Panel Backend APIs & Frontend pages:**
     - `[ ]` Product Management (Create, Update, Bulk Import).
     - `[ ]` Order Management (View all orders).
     - `[ ]` Lead Management (View all leads).
+    - `[ ]` make navbar options for admin to navigate to admin panel. (only if admin)
+    - `[ ]` keep reviewing the last wip commit
 - `[ ]` **Editable User Profile:**
     - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
 

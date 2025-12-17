@@ -64,7 +64,6 @@ const CountryDropdownComponent = (
 
   const handleSelect = useCallback(
     (country: Country) => {
-      console.log('🌍 CountryDropdown value: ', country);
       onChange?.(country);
       setOpen(false);
     },

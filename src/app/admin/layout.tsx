@@ -1,0 +1,98 @@
+import { cookies } from 'next/headers';
+import * as jwt from 'jsonwebtoken';
+import { getJwtKeys } from '@/lib/jwt';
+import { prisma } from '@/lib/db';
+import { Role } from '@/generated/prisma/client';
+import Link from 'next/link';
+import { Package2, Users, ShoppingCart, Gem } from 'lucide-react';
+import { UnauthorizedAccess } from '@/components/admin/unauthorized-access';
+
+async function checkAdminAuth() {
+  const token = (await cookies()).get('accessToken')?.value;
+  if (!token) {
+    return false;
+  }
+  try {
+    const { publicKey } = getJwtKeys();
+    const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
+
+    if (decoded.role !== Role.ADMIN) {
+      return false;
+    }
+    
+    const admin = await prisma.user.findUnique({
+      where: { id: decoded.userId, role: Role.ADMIN },
+    });
+
+    return !!admin;
+  } catch (error) {
+    console.error('Admin layout auth check failed:', error);
+    return false;
+  }
+}
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const isAdmin = await checkAdminAuth();
+
+  if (!isAdmin) {
+    return <UnauthorizedAccess />;
+  }
+
+  return (
+    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <div className="hidden border-r bg-muted/40 md:block">
+        <div className="flex h-full max-h-screen flex-col gap-2">
+          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+            <Link href="/admin" className="flex items-center gap-2 font-semibold">
+              <Package2 className="h-6 w-6" />
+              <span className="">Admin Panel</span>
+            </Link>
+          </div>
+          <div className="flex-1">
+            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+              <Link
+                href="/admin/leads"
+                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+              >
+                <Gem className="h-4 w-4" />
+                Leads
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Orders
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Package2 className="h-4 w-4" />
+                Products
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Users className="h-4 w-4" />
+                Customers
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          {/* We can add a mobile nav toggle and user dropdown here later */}
+          <div className="w-full flex-1">
+             <h1 className="text-lg font-semibold">Dashboard</h1>
+          </div>
+        </header>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
