@@ -78,7 +78,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - `[ ]` **Admin Panel Backend APIs & Frontend pages:**
     - `[ ]` Product Management (Create, Update, Bulk Import).
     - `[ ]` Order Management (View all orders).
-    - `[ ]` Lead Management (View all leads).
+    - `[x]` Lead Management (View all leads).
     - `[ ]` make navbar options for admin to navigate to admin panel. (only if admin)
     - `[ ]` keep reviewing the last wip commit
 - `[ ]` **Editable User Profile:**

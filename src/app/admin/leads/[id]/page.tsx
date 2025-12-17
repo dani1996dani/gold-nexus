@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { StatusBadge } from '@/components/admin/status-badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,8 @@ import { UpdateLeadStatus } from '@/components/admin/update-lead-status';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { getLeadById } from '@/lib/data/leads';
+import { formatDate } from '@/lib/utils';
 
 interface LeadDetailPageProps {
   params: Promise<{
@@ -17,19 +18,13 @@ interface LeadDetailPageProps {
 export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
   const { id } = await params;
 
-  const lead = await prisma.secondHandLead.findUnique({
-    where: { id },
-  });
+  const lead = await getLeadById(id);
 
   if (!lead) {
     notFound();
   }
 
-  // Safely get photo URLs. Prisma returns JSON fields as objects/arrays already.
-  const photoUrls: string[] =
-    lead.photoUrls && Array.isArray(lead.photoUrls)
-      ? lead.photoUrls.map(String) // Ensure all items are strings
-      : [];
+  const photoUrls: string[] = Array.isArray(lead.photoUrls) ? lead.photoUrls : [];
 
   const leadDetails = {
     'Full Name': lead.fullName,
@@ -40,8 +35,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     'Item Type': lead.itemType,
     'Estimated Karat': lead.estimatedKarat,
     'Estimated Weight': lead.estimatedWeight,
-    'Submitted At': new Date(lead.createdAt).toLocaleString(),
-    'Last Updated': new Date(lead.updatedAt).toLocaleString(),
+    'Submitted At': formatDate(lead.createdAt, {showTime: true}),
+    'Last Updated': formatDate(lead.updatedAt, {showTime: true}),
   };
 
   return (

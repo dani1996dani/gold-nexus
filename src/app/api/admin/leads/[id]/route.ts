@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 import { withAdminAuth, AdminApiHandler } from '@/lib/admin-auth';
 import { LeadStatus } from '@/generated/prisma/client';
+import { getLeadById } from '@/lib/data/leads';
 
 const getLeadByIdHandler: AdminApiHandler = async (req, context) => {
   try {
@@ -12,9 +12,7 @@ const getLeadByIdHandler: AdminApiHandler = async (req, context) => {
       return NextResponse.json({ message: 'Invalid lead ID' }, { status: 400 });
     }
 
-    const lead = await prisma.secondHandLead.findUnique({
-      where: { id },
-    });
+    const lead = await getLeadById(id);
 
     if (!lead) {
       return NextResponse.json({ message: 'Lead not found' }, { status: 404 });

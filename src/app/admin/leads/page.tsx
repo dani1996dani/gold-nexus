@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getLeads } from '@/lib/data/leads';
+import { formatDate } from '@/lib/utils';
 
 interface LeadsPageProps {
   searchParams: Promise<{
@@ -51,7 +52,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
           <TableBody>
             {leads.map((lead) => (
               <TableRow key={lead.id}>
-                <TableCell>{new Date(lead.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell>{formatDate(lead.createdAt)}</TableCell>
                 <TableCell className="font-medium">{lead.fullName}</TableCell>
                 <TableCell>{lead.email}</TableCell>
                 <TableCell>

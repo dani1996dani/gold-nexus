@@ -1,40 +1,12 @@
-import { cookies } from 'next/headers';
-import * as jwt from 'jsonwebtoken';
-import { getJwtKeys } from '@/lib/jwt';
-import { prisma } from '@/lib/db';
-import { Role } from '@/generated/prisma/client';
 import Link from 'next/link';
 import { Package2, Users, ShoppingCart, Gem } from 'lucide-react';
 import { UnauthorizedAccess } from '@/components/admin/unauthorized-access';
-
-async function checkAdminAuth() {
-  const token = (await cookies()).get('accessToken')?.value;
-  if (!token) {
-    return false;
-  }
-  try {
-    const { publicKey } = getJwtKeys();
-    const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
-
-    if (decoded.role !== Role.ADMIN) {
-      return false;
-    }
-    
-    const admin = await prisma.user.findUnique({
-      where: { id: decoded.userId, role: Role.ADMIN },
-    });
-
-    return !!admin;
-  } catch (error) {
-    console.error('Admin layout auth check failed:', error);
-    return false;
-  }
-}
+import { getAuthenticatedAdmin } from '@/lib/data/auth';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const isAdmin = await checkAdminAuth();
+  const admin = await getAuthenticatedAdmin();
 
-  if (!isAdmin) {
+  if (!admin) {
     return <UnauthorizedAccess />;
   }
 

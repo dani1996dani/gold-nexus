@@ -21,8 +21,17 @@ export async function getLeads(page: number, limit: number) {
 
   const totalPages = Math.ceil(total / limit);
 
+  // Safely parse photoUrls for each lead
+  const leadsWithParsedPhotos = leads.map(lead => {
+    const photoUrls: string[] =
+      lead.photoUrls && Array.isArray(lead.photoUrls)
+        ? lead.photoUrls.filter((item): item is string => typeof item === 'string')
+        : [];
+    return { ...lead, photoUrls };
+  });
+
   return {
-    data: leads,
+    data: leadsWithParsedPhotos,
     pagination: {
       total,
       page,
@@ -30,4 +39,25 @@ export async function getLeads(page: number, limit: number) {
       totalPages,
     },
   };
+}
+
+/**
+ * Fetches a single lead by its ID.
+ * @param id The ID of the lead to fetch.
+ */
+export async function getLeadById(id: string) {
+  const lead = await prisma.secondHandLead.findUnique({
+    where: { id },
+  });
+
+  if (!lead) {
+    return null;
+  }
+
+  const photoUrls: string[] =
+    lead.photoUrls && Array.isArray(lead.photoUrls)
+      ? lead.photoUrls.filter((item): item is string => typeof item === 'string')
+      : [];
+
+  return { ...lead, photoUrls };
 }
