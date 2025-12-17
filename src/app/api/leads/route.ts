@@ -49,6 +49,7 @@ export async function POST(req: Request) {
     const newLead = await prisma.secondHandLead.create({
       data: {
         ...validatedData,
+        estimatedValue: estimatedValue,
       },
     });
 

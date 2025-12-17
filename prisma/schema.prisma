@@ -109,6 +109,7 @@ model SecondHandLead {
   itemType        String
   estimatedWeight String
   estimatedKarat  String
+  estimatedValue  Decimal?   @db.Decimal(10, 2)
   photoUrls       Json       @default("[]")
   status          LeadStatus @default(SUBMITTED)
   createdAt       DateTime   @default(now())
