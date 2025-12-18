@@ -5,7 +5,12 @@ import { prisma } from '@/lib/db';
  * This function centralizes the data access logic so it can be reused
  * by both Server Components and API Routes.
  */
-export async function getLeads(page: number, limit: number) {
+export async function getLeads(
+  page: number, 
+  limit: number, 
+  sortBy: string = 'createdAt', 
+  sortOrder: 'asc' | 'desc' = 'desc'
+) {
   const skip = (page - 1) * limit;
 
   const [leads, total] = await prisma.$transaction([
@@ -13,7 +18,7 @@ export async function getLeads(page: number, limit: number) {
       skip,
       take: limit,
       orderBy: {
-        createdAt: 'desc',
+        [sortBy]: sortOrder,
       },
     }),
     prisma.secondHandLead.count(),

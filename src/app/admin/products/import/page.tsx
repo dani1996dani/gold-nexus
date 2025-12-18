@@ -207,7 +207,7 @@ export default function ImportPage() {
                             </CardDescription>
                         </div>
                         <Button variant="outline" size="sm" onClick={downloadTemplate}>
-                            Download Template
+                            Download CSV Template
                         </Button>
                     </div>
                 </CardHeader>

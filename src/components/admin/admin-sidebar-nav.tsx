@@ -24,11 +24,6 @@ export function AdminSidebarNav() {
       icon: Package2,
       label: 'Products',
     },
-    {
-      href: '/admin/customers',
-      icon: Users,
-      label: 'Customers',
-    },
   ];
 
   return (

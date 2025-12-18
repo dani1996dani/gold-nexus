@@ -7,93 +7,111 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getLeads } from '@/lib/data/leads';
 import { formatDate } from '@/lib/utils';
+import { SortableColumn } from '@/components/admin/sortable-column';
 
 interface LeadsPageProps {
   searchParams: Promise<{
     page?: string;
     limit?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
   }>;
 }
 
 export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
-  const page = parseInt((await searchParams)?.page || '1', 10);
-  const limit = parseInt((await searchParams)?.limit || '15', 10);
+  const resolvedParams = await searchParams;
+  const page = parseInt(resolvedParams.page || '1', 10);
+  const limit = parseInt(resolvedParams.limit || '15', 10);
+  const sortBy = resolvedParams.sortBy || 'createdAt';
+  const sortOrder = resolvedParams.sortOrder || 'desc';
 
-  const { data: leads, pagination } = await getLeads(page, limit);
+  const { data: leads, pagination } = await getLeads(page, limit, sortBy, sortOrder);
   const { total, totalPages } = pagination;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Second-Hand Gold Leads</CardTitle>
-        <CardDescription>
-          Review and manage all incoming inquiries from users wanting to sell their gold.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>
-                <span className="sr-only">Actions</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {leads.map((lead) => (
-              <TableRow key={lead.id}>
-                <TableCell>{formatDate(lead.createdAt)}</TableCell>
-                <TableCell className="font-medium">{lead.fullName}</TableCell>
-                <TableCell>{lead.email}</TableCell>
-                <TableCell>
-                  <StatusBadge status={lead.status} />
-                </TableCell>
-                <TableCell>
-                  <Link href={`/admin/leads/${lead.id}`}>
-                    <Button variant="outline" size="sm">
-                      View Details <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        {leads.length === 0 && (
-          <div className="p-8 text-center text-muted-foreground">No leads found.</div>
-        )}
-
-        {/* Pagination Controls */}
-        <div className="mt-6 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Showing {Math.min((page - 1) * limit + 1, total)} to {Math.min(page * limit, total)} of{' '}
-            {total} leads.
-          </div>
-          <div className="flex gap-2">
-            <Link href={`/admin/leads?page=${Math.max(1, page - 1)}`}>
-              <Button variant="outline" disabled={page <= 1}>
-                Previous
-              </Button>
-            </Link>
-            <Link href={`/admin/leads?page=${Math.min(totalPages, page + 1)}`}>
-              <Button variant="outline" disabled={page >= totalPages}>
-                Next
-              </Button>
-            </Link>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+           <h1 className="text-2xl font-semibold">Leads</h1>
+           <p className="text-sm text-muted-foreground">Review and manage all incoming inquiries from users wanting to sell their gold.</p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>
+                    <SortableColumn column="createdAt" label="Date" />
+                </TableHead>
+                <TableHead>
+                    <SortableColumn column="fullName" label="Name" />
+                </TableHead>
+                <TableHead>
+                    <SortableColumn column="email" label="Email" />
+                </TableHead>
+                <TableHead>
+                    <SortableColumn column="status" label="Status" />
+                </TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {leads.map((lead) => (
+                <TableRow key={lead.id}>
+                  <TableCell>{formatDate(lead.createdAt)}</TableCell>
+                  <TableCell className="font-medium">{lead.fullName}</TableCell>
+                  <TableCell>{lead.email}</TableCell>
+                  <TableCell>
+                    <StatusBadge status={lead.status} />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Link href={`/admin/leads/${lead.id}`}>
+                      <Button variant="ghost" size="sm">
+                        View <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          {leads.length === 0 && (
+            <div className="p-8 text-center text-muted-foreground">No leads found.</div>
+          )}
+        </CardContent>
+      </Card>
+      
+       {/* Pagination Controls */}
+       <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex-1 text-sm text-muted-foreground">
+                Page {page} of {totalPages}
+            </div>
+            <div className="space-x-2">
+                <Link href={page > 1 ? `/admin/leads?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
+                    <Button variant="outline" size="sm" disabled={page <= 1}>
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                    </Button>
+                </Link>
+                <Link href={page < totalPages ? `/admin/leads?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
+                    <Button variant="outline" size="sm" disabled={page >= totalPages}>
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                </Link>
+            </div>
+        </div>
+    </div>
   );
 }

@@ -2,22 +2,22 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { MoreHorizontal, ArrowUpDown, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MoreHorizontal, Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
-// Actually I don't see useDebounce in the file list. I'll implement a simple debounce.
+import { cn } from '@/lib/utils';
 
 type ProductForTable = {
   id: string;
@@ -26,6 +26,7 @@ type ProductForTable = {
   stockStatus: 'IN_STOCK' | 'OUT_OF_STOCK';
   isActive: boolean;
   price: string;
+  imageUrl: string;
 };
 
 type PaginationMeta = {
@@ -122,6 +123,25 @@ export default function AdminProductsPage() {
     }
   };
 
+  const SortButton = ({ column, label }: { column: string, label: string }) => {
+      const isSorted = sortBy === column;
+      const isAsc = isSorted && sortOrder === 'asc';
+      return (
+        <Button
+            variant="ghost"
+            onClick={() => handleSort(column)}
+            className={cn("-ml-4 h-8 data-[state=open]:bg-accent")}
+        >
+            <span>{label}</span>
+            {isSorted ? (
+                isAsc ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+                <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground/50" />
+            )}
+        </Button>
+      )
+  }
+
   return (
     <div className="space-y-6">
        <ConfirmActionModal
@@ -165,30 +185,21 @@ export default function AdminProductsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[150px]">
-                  <Button variant="ghost" onClick={() => handleSort('sku')} className="-ml-4">
-                    SKU <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </Button>
+                <TableHead className="w-[80px]">Image</TableHead>
+                <TableHead>
+                    <SortButton column="sku" label="SKU" />
                 </TableHead>
                 <TableHead>
-                   <Button variant="ghost" onClick={() => handleSort('name')} className="-ml-4">
-                    Name <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </Button>
+                    <SortButton column="name" label="Name" />
                 </TableHead>
                 <TableHead>
-                   <Button variant="ghost" onClick={() => handleSort('stockStatus')} className="-ml-4">
-                    Stock Status <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </Button>
+                    <SortButton column="stockStatus" label="Stock Status" />
                 </TableHead>
                 <TableHead>
-                   <Button variant="ghost" onClick={() => handleSort('isActive')} className="-ml-4">
-                    Active <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </Button>
+                    <SortButton column="isActive" label="Active" />
                 </TableHead>
                 <TableHead className="text-right">
-                   <Button variant="ghost" onClick={() => handleSort('price')} className="-ml-4">
-                    Price <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </Button>
+                    <SortButton column="price" label="Price" />
                 </TableHead>
                 <TableHead className="w-[50px]"></TableHead>
               </TableRow>
@@ -196,19 +207,29 @@ export default function AdminProductsPage() {
             <TableBody>
               {isLoading ? (
                   <TableRow>
-                      <TableCell colSpan={6} className="text-center py-10">Loading...</TableCell>
+                      <TableCell colSpan={7} className="text-center py-10">Loading...</TableCell>
                   </TableRow>
               ) : error ? (
                    <TableRow>
-                      <TableCell colSpan={6} className="text-center text-red-500 py-10">{error}</TableCell>
+                      <TableCell colSpan={7} className="text-center text-red-500 py-10">{error}</TableCell>
                   </TableRow>
               ) : products.length === 0 ? (
                   <TableRow>
-                      <TableCell colSpan={6} className="text-center py-10">No products found.</TableCell>
+                      <TableCell colSpan={7} className="text-center py-10">No products found.</TableCell>
                   </TableRow>
               ) : (
                 products.map((product) => (
                   <TableRow key={product.id}>
+                    <TableCell>
+                        <div className="relative h-10 w-10 overflow-hidden rounded-md border bg-muted">
+                            <Image
+                                src={product.imageUrl}
+                                alt={product.name}
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                    </TableCell>
                     <TableCell className="font-medium">{product.sku}</TableCell>
                     <TableCell className="max-w-[200px] truncate" title={product.name}>{product.name}</TableCell>
                     <TableCell>
@@ -231,7 +252,6 @@ export default function AdminProductsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem asChild>
                             <Link href={`/admin/products/${product.id}/edit`}>Edit</Link>
                           </DropdownMenuItem>
