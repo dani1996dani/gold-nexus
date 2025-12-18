@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { Package2, Users, ShoppingCart, Gem } from 'lucide-react';
+import { Package2 } from 'lucide-react';
 import { UnauthorizedAccess } from '@/components/admin/unauthorized-access';
 import { getAuthenticatedAdmin } from '@/lib/data/auth';
+import { AdminSidebarNav } from '@/components/admin/admin-sidebar-nav';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const admin = await getAuthenticatedAdmin();
@@ -21,36 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </Link>
           </div>
           <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="/admin/leads"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Gem className="h-4 w-4" />
-                Leads
-              </Link>
-              <Link
-                href="/admin/orders"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Orders
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Package2 className="h-4 w-4" />
-                Products
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-4 w-4" />
-                Customers
-              </Link>
-            </nav>
+            <AdminSidebarNav />
           </div>
         </div>
       </div>

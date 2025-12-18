@@ -77,10 +77,11 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[x]` Build `POST /api/leads` endpoint and connect the frontend form.
 - `[ ]` **Admin Panel Backend APIs & Frontend pages:**
     - `[ ]` Product Management (Create, Update, Bulk Import).
-    - `[ ]` Order Management (View all orders).
+    - `[x]` Order Management (View all orders).
     - `[x]` Lead Management (View all leads).
     - `[x]` make navbar options for admin to navigate to admin panel. (only if admin)
     - `[ ]` lead management page is BROKEN on mobile view. think if need to fix
+    - `[ ]` (get rid of update status in leads page, and do it in the field like order management)
 - `[ ]` **Error display in FE:**
   - `[ ]` Make all errors show a toast instead of alerts or console logs etc
 - `[ ]` **Editable User Profile:**

@@ -85,6 +85,7 @@ export async function getOrderById(id: string) {
             select: {
               name: true,
               sku: true,
+              imageUrl: true,
             },
           },
         },
