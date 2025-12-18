@@ -22,7 +22,7 @@ async function getProduct(sku: string): Promise<Product | null> {
 }
 
 interface ProductDetailPageProps {
-  params: { sku: string };
+  params: Promise<{ sku: string }>;
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
