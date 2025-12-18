@@ -81,6 +81,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[x]` Lead Management (View all leads).
     - `[x]` make navbar options for admin to navigate to admin panel. (only if admin)
     - `[ ]` lead management page is BROKEN on mobile view. think if need to fix
+    - `[ ]` fix race condition of detecting if user is admin or not and showing the "access denied" page.
     - `[x]` (get rid of update status in leads page, and do it in the field like order management)
 - `[ ]` **Error display in FE:**
   - `[ ]` Make all errors show a toast instead of alerts or console logs etc
