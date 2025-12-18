@@ -56,6 +56,20 @@ This phase implements the CSV import functionality, leveraging the image managem
     - [x] Implement the file upload component for the CSV.
     - [x] Display a summary report to the admin after the import process is complete.
 
+## ✅ Phase 4: Human Review
+
+- [ ] **Backend (API):**
+  - [ ] Create `POST /api/admin/products/import-csv` endpoint.
+- [ ] **Frontend (UI):**
+  - [ ] in bulk import page. in csv file thing, Download template is a csv. maybe better to give excel file?
+  - [ ] in bulk import page, there is text "CSV only", will it support excel files or we need to code it up?
+  - [ ] the form for add manual product is ugly, looks awful, need a layout rethink.
+  - [ ] in the admin panel sidebar, there is a "customers" link. is this needed by the pdf, or can be removed?
+  - [ ] in product table, for each item in the 3 dots on the right, there is an "actions" text, that does nothing? its not even a button, what should it do? can it be deleted?
+  - [ ] add image of the product in table view and in single view
+  - [ ] products page has better header style than leads and orders, change that in the 2 other pages.
+  - [ ] Either remove sorting of columns in products, or add it to leads and orders. they need to be consistent.
+
 ---
 
 ## Design Rationale & Key Decisions
