@@ -232,15 +232,18 @@ export default function EditProductPage() {
                         <CardTitle>Status & Organization</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                         <div className="flex items-center space-x-2 rounded-md border p-3">
-                            <Controller
-                                control={control}
-                                name="isActive"
-                                render={({ field }) => (
-                                    <Checkbox id="isActive" checked={field.value} onCheckedChange={field.onChange} />
-                                )}
-                            />
-                            <Label htmlFor="isActive" className="cursor-pointer">Active (Visible to customers)</Label>
+                         <div className="space-y-2">
+                            <Label>Visibility</Label>
+                            <div className="flex h-10 items-center space-x-2 rounded-md border px-3">
+                                <Controller
+                                    control={control}
+                                    name="isActive"
+                                    render={({ field }) => (
+                                        <Checkbox id="isActive" checked={field.value} onCheckedChange={field.onChange} />
+                                    )}
+                                />
+                                <Label htmlFor="isActive" className="cursor-pointer text-sm font-normal">Active Product</Label>
+                            </div>
                         </div>
 
                          <div className="space-y-2">
@@ -250,7 +253,7 @@ export default function EditProductPage() {
                                 name="stockStatus"
                                 render={({ field }) => (
                                     <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                                    <SelectTrigger className='w-full'><SelectValue placeholder="Select status" /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="IN_STOCK">In Stock</SelectItem>
                                         <SelectItem value="OUT_OF_STOCK">Out of Stock</SelectItem>
@@ -267,7 +270,7 @@ export default function EditProductPage() {
                                 name="category"
                                 render={({ field }) => (
                                   <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                                    <SelectTrigger className='w-full'><SelectValue placeholder="Select category" /></SelectTrigger>
                                     <SelectContent>
                                       <SelectItem value="BAR">Bar</SelectItem>
                                       <SelectItem value="COIN">Coin</SelectItem>

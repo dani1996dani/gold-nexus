@@ -69,7 +69,10 @@ This phase implements the CSV import functionality, leveraging the image managem
   - [x] products page has better header style than leads and orders, change that in the 2 other pages.
     - [x] Either remove sorting of columns in products, or add it to leads and orders. they need to be consistent.
     - [x] there is too much padding on the top of each table in admin panel, no? the table headers are too far down. fix it for all tables in admin panel (3 tables)
-    - [ ]  
+    - [x] in the product id page, in the Status & Organization div, make all value divs the same width. also, Active (visible to customers) is taking 2 rows... either make the text shorter or do a tooltip.
+    - [x] in 'download csv template' button, add like 3 dummy products that exaplin how to fill up the CSV file. 
+  [x] **QA:**
+    - [x] generate a csv file for me. actually two. 1 with 3 products. and 1 file with 58 products. just the csvs. you can write them in the /docs folder.
 ---
 
 ## Design Rationale & Key Decisions

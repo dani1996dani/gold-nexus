@@ -100,7 +100,16 @@ export default function ImportPage() {
 
     const downloadTemplate = () => {
         const headers = ['sku', 'name', 'description', 'price', 'weight', 'karat', 'category', 'vendorName', 'stockStatus'];
-        const csvContent = "data:text/csv;charset=utf-8," + headers.join(",");
+        const examples = [
+            ['EXAMPLE-BAR-001', '1kg Gold Bar Example', 'Fine gold bar 99.99% purity', '65000.00', '1 kg', '24K', 'BAR', 'PAMP Suisse', 'IN_STOCK'],
+            ['EXAMPLE-COIN-002', '1oz Gold Coin Example', 'Beautiful gold coin', '2100.50', '1 oz', '22K', 'COIN', 'Royal Mint', 'IN_STOCK'],
+            ['EXAMPLE-JWLR-003', 'Gold Necklace Example', 'Elegant 18K necklace', '1500.00', '15 g', '18K', 'JEWELRY', 'Gold Nexus', 'OUT_OF_STOCK']
+        ];
+        
+        const csvContent = "data:text/csv;charset=utf-8," 
+            + headers.join(",") + "\n"
+            + examples.map(e => e.join(",")).join("\n");
+
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
