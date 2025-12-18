@@ -1,13 +1,40 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import { StatusBadge } from '@/components/admin/status-badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LeadStatus } from '@/generated/prisma/client';
-import { UpdateLeadStatus } from '@/components/admin/update-lead-status';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { getLeadById } from '@/lib/data/leads';
 import { formatDate } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { formatCurrency } from '@/lib/utils/formatCurrency';
+
+const LEAD_STATUSES = ['SUBMITTED', 'CONTACTED', 'CLOSED'] as const;
+
+type LeadDetail = {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  country: string;
+  city: string;
+  itemType: string;
+  estimatedKarat: string;
+  estimatedWeight: string;
+  estimatedValue: string | null;
+  status: string;
+  photoUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+};
 
 interface LeadDetailPageProps {
   params: Promise<{
@@ -15,16 +42,81 @@ interface LeadDetailPageProps {
   }>;
 }
 
-export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
-  const { id } = await params;
+export default function LeadDetailPage({ params }: LeadDetailPageProps) {
+  const [lead, setLead] = useState<LeadDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [selectValue, setSelectValue] = useState<string | undefined>();
 
-  const lead = await getLeadById(id);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const { id } = await params;
+        const res = await fetch(`/api/admin/leads/${id}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            notFound();
+          } else {
+            throw new Error('Failed to load lead details');
+          }
+          return;
+        }
+        const fetchedLead = await res.json();
+        setLead(fetchedLead);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [params]);
+  
+  useEffect(() => {
+    setSelectValue(lead?.status);
+  }, [lead]);
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (newStatus === lead?.status) return;
+
+    setIsUpdatingStatus(true);
+    setError(null);
+    setSelectValue(newStatus);
+
+    try {
+      const res = await fetch(`/api/admin/leads/${lead!.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.message || 'Failed to update status');
+      }
+
+      const updatedLead = await res.json();
+      setLead(updatedLead);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      setSelectValue(lead?.status); // Revert on error
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+  
+  if (isLoading) {
+    return <div className="p-4 text-center">Loading lead details...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-center text-red-500">{error}</div>;
+  }
 
   if (!lead) {
     notFound();
   }
-
-  const photoUrls: string[] = Array.isArray(lead.photoUrls) ? lead.photoUrls : [];
 
   const leadDetails = {
     'Full Name': lead.fullName,
@@ -34,9 +126,9 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     City: lead.city,
     'Item Type': lead.itemType,
     'Estimated Karat': lead.estimatedKarat,
-    'Estimated Weight': lead.estimatedWeight,
-    'Submitted At': formatDate(lead.createdAt, {showTime: true}),
-    'Last Updated': formatDate(lead.updatedAt, {showTime: true}),
+    'Estimated Weight': lead.estimatedWeight ? `${lead.estimatedWeight} grams` : null,
+    'Submitted At': formatDate(lead.createdAt, { showTime: true }),
+    'Last Updated': formatDate(lead.updatedAt, { showTime: true }),
   };
 
   return (
@@ -48,8 +140,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
           </Button>
         </Link>
       </div>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Lead Details</CardTitle>
@@ -60,17 +152,34 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
                 {Object.entries(leadDetails).map(([key, value]) => (
                   <div key={key}>
                     <h3 className="font-medium text-muted-foreground">{key}</h3>
-                    <p>{value || '-'}</p>
+                    <p>{String(value) || '-'}</p>
                   </div>
                 ))}
                 <div>
                   <h3 className="font-medium text-muted-foreground">Status</h3>
-                  <StatusBadge status={lead.status} />
+                  <Select
+                    value={selectValue}
+                    onValueChange={handleStatusChange}
+                    disabled={isUpdatingStatus}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue asChild>
+                         {selectValue ? <StatusBadge status={selectValue} /> : null}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LEAD_STATUSES.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          <StatusBadge status={s} />
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <h3 className="font-medium text-muted-foreground">Initial Estimated Value</h3>
                   <p className="text-lg font-semibold">
-                    {lead.estimatedValue ? `$${lead.estimatedValue.toFixed(2)}` : 'N/A'}
+                    {lead.estimatedValue ? formatCurrency(lead.estimatedValue) : 'N/A'}
                   </p>
                 </div>
               </div>
@@ -81,9 +190,9 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
               <CardTitle>Submitted Photos</CardTitle>
             </CardHeader>
             <CardContent>
-              {photoUrls.length > 0 ? (
+              {lead.photoUrls.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                  {photoUrls.map((url, index) => (
+                  {lead.photoUrls.map((url, index) => (
                     <a href={url} target="_blank" rel="noopener noreferrer" key={index}>
                       <img
                         src={url}
@@ -98,14 +207,6 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
               )}
             </CardContent>
           </Card>
-        </div>
-
-        <div className="lg:col-span-1">
-          <UpdateLeadStatus
-            leadId={lead.id}
-            currentStatus={lead.status}
-            statuses={Object.values(LeadStatus)}
-          />
         </div>
       </div>
     </div>
