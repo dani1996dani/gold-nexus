@@ -43,7 +43,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
         </div>
       </div>
 
-      <Card>
+      <Card className="p-0 overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>

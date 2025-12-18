@@ -67,10 +67,9 @@ This phase implements the CSV import functionality, leveraging the image managem
   - [x] in product table, for each item in the 3 dots on the right, there is an "actions" text, that does nothing? its not even a button, what should it do? can it be deleted?
   - [x] add image of the product in table view and in single view
   - [x] products page has better header style than leads and orders, change that in the 2 other pages.
-  - [x] Either remove sorting of columns in products, or add it to leads and orders. they need to be consistent.
-  - [ ] there is too much padding on the top of each table in admin panel, no? the table headers are too far down. fix it for all tables in admin panel (3 tables)
-  - [ ] 
-
+    - [x] Either remove sorting of columns in products, or add it to leads and orders. they need to be consistent.
+    - [x] there is too much padding on the top of each table in admin panel, no? the table headers are too far down. fix it for all tables in admin panel (3 tables)
+    - [ ]  
 ---
 
 ## Design Rationale & Key Decisions

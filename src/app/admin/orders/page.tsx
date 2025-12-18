@@ -44,7 +44,7 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
         </div>
       </div>
 
-      <Card>
+      <Card className="p-0 overflow-hidden">
         <CardContent className="p-0">
             <Table>
             <TableHeader>
