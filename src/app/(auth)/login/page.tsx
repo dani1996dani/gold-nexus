@@ -44,15 +44,16 @@ export default function LoginPage() {
         body: JSON.stringify(data),
       });
 
+      const responseData = await res.json(); // Get response data here
+
       if (res.ok) {
-        login();
+        // Pass the user object to login
+        login(responseData.user); 
         router.push('/profile');
       } else {
-        const responseData = await res.json();
-        // Set a general form error
         setError('root', {
           type: 'manual',
-          message: responseData.error || 'Failed to login',
+          message: responseData.error || responseData.message || 'Failed to login',
         });
       }
     } catch (err) {

@@ -28,3 +28,15 @@ export function formatDate(
 
   return new Intl.DateTimeFormat('en-US', dateOptions).format(new Date(date));
 }
+
+export function formatPriceNumber(value: number | string): string {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(num)) {
+    return String(value);
+  }
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num);
+}
+

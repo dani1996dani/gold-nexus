@@ -74,7 +74,6 @@ const CheckoutForm = () => {
       const payload = {
         shippingAddress: {
           ...data,
-          country: data.country.name, // Send only the country name string
         },
         cartItems: items.map(item => ({ id: item.id, quantity: item.quantity })),
       };

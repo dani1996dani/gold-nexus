@@ -79,10 +79,13 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[ ]` Product Management (Create, Update, Bulk Import).
     - `[ ]` Order Management (View all orders).
     - `[x]` Lead Management (View all leads).
-    - `[ ]` make navbar options for admin to navigate to admin panel. (only if admin)
-    - `[ ]` keep reviewing the last wip commit
+    - `[x]` make navbar options for admin to navigate to admin panel. (only if admin)
+    - `[ ]` lead management page is BROKEN on mobile view. think if need to fix
+- `[ ]` **Error display in FE:**
+  - `[ ]` Make all errors show a toast instead of alerts or console logs etc
 - `[ ]` **Editable User Profile:**
     - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
+- `[ ]` **create a custom 404 page?**
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
 - `[ ]` **STATUS: PENDING**

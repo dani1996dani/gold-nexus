@@ -63,13 +63,14 @@ export default function RegisterPage() {
       });
 
       if (res.status === 201) {
-        login(); // Immediately update the global auth state
+        const responseData = await res.json();
+        login(responseData.user); // Pass the user object to login
         router.push('/profile');
       } else {
         const responseData = await res.json();
         setError('root', {
           type: 'manual',
-          message: responseData.error || 'Failed to create account',
+          message: responseData.error || responseData.message || 'Failed to create account',
         });
       }
     } catch (err) {

@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
         data: {
           userId,
           totalAmount,
-          shippingAddressJson: shippingAddress,
+          shippingAddressJson: { ...shippingAddress, country: shippingAddress.country.name },
           status: 'PENDING',
           items: {
             create: orderItemsCreateData,

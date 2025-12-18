@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { withAdminAuth, AdminApiHandler } from '@/lib/admin-auth';
 import { LeadStatus } from '@/generated/prisma/client';
 import { getLeadById } from '@/lib/data/leads';
+import { prisma } from '@/lib/db';
 
 const getLeadByIdHandler: AdminApiHandler = async (req, context) => {
   try {

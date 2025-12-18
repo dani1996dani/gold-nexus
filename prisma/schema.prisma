@@ -76,6 +76,7 @@ model Product {
 
 model Order {
   id                    String      @id @default(uuid())
+  displayId             Int         @unique @default(autoincrement()) // User-friendly sequential ID
   userId                String
   user                  User        @relation(fields: [userId], references: [id])
   totalAmount           Decimal     @db.Decimal(10, 2)
