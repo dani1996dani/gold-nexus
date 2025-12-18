@@ -54,11 +54,32 @@ const productCsvSchema = z.object({
 
 const importCsvHandler: AdminApiHandler = async (req) => {
   try {
+    if (!supabase) {
+        return NextResponse.json({ message: 'Supabase client is not configured.' }, { status: 500 });
+    }
+
     const formData = await req.formData();
     const file = formData.get('file') as File;
 
     if (!file) {
       return NextResponse.json({ message: 'No file uploaded' }, { status: 400 });
+    }
+
+    // --- Pre-fetch Storage File List ---
+    // We list files to find the correct extensions for each SKU
+    const { data: storageFiles, error: storageError } = await supabase.storage
+      .from('gold-nexus-images')
+      .list('', { limit: 1000 }); // Adjust limit if inventory is huge
+
+    const imageMap = new Map<string, string>();
+    if (!storageError && storageFiles) {
+        storageFiles.forEach(f => {
+            const fileNameParts = f.name.split('.');
+            if (fileNameParts.length > 1) {
+                const sku = fileNameParts.slice(0, -1).join('.'); // Handle SKUs with dots
+                imageMap.set(sku.toLowerCase(), f.name);
+            }
+        });
     }
 
     const text = await file.text();
@@ -71,9 +92,6 @@ const importCsvHandler: AdminApiHandler = async (req) => {
 
     for (const [index, row] of rows.entries()) {
       try {
-        // Map CSV headers to schema keys if necessary, or assume they match
-        // Expected headers: sku, name, description, price, weight, karat, category, vendorName, stockStatus
-        
         const parsedData = productCsvSchema.parse({
             sku: row.sku,
             name: row.name,
@@ -81,26 +99,17 @@ const importCsvHandler: AdminApiHandler = async (req) => {
             price: row.price,
             weight: row.weight,
             karat: row.karat,
-            category: row.category?.toUpperCase(), // Ensure enum match
+            category: row.category?.toUpperCase(),
             vendorName: row.vendorName,
-            stockStatus: row.stockStatus?.toUpperCase().replace(' ', '_'), // Try to normalize
+            stockStatus: row.stockStatus?.toUpperCase().replace(' ', '_'),
         });
 
-        // Construct Image URL
-        // We assume the image is uploaded with the name matching the SKU (and probably extension)
-        // Since we don't know the extension, we might have to guess or check.
-        // Or simpler: We just assume .jpg or .png or rely on what's in the bucket.
-        // Actually, 'getPublicUrl' just constructs a string, it doesn't check existence.
-        // For now, we will assume the user uploaded SKU.jpg or SKU.png. 
-        // A better convention might be to just point to the SKU name and let the frontend/browser handle it?
-        // No, `imageUrl` in DB is a full URL.
-        // Let's assume .jpg for now as a default, or checking the file extension is impossible here without checking storage.
-        // Alternative: The CSV *could* have an imageUrl column, but the plan says "automatically construct the imageUrl from the sku".
-        // Let's use `[sku].jpg` as a default convention.
+        // --- Match SKU to Actual Filename ---
+        const actualFileName = imageMap.get(parsedData.sku.toLowerCase()) || `${parsedData.sku}.jpg`;
         
         const { data: { publicUrl } } = supabase.storage
-            .from('product-images')
-            .getPublicUrl(`${parsedData.sku}.jpg`); // Defaulting to jpg
+            .from('gold-nexus-images')
+            .getPublicUrl(actualFileName);
         
         // Upsert Product
         await prisma.product.upsert({

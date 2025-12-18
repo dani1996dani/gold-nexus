@@ -4,6 +4,10 @@ import { supabase } from '@/lib/supabase';
 
 const uploadImagesHandler: AdminApiHandler = async (req) => {
   try {
+    if (!supabase) {
+        return NextResponse.json({ message: 'Supabase client is not configured on the server.' }, { status: 500 });
+    }
+
     const formData = await req.formData();
     const files = formData.getAll('files') as File[];
     
@@ -20,7 +24,7 @@ const uploadImagesHandler: AdminApiHandler = async (req) => {
       const buffer = await file.arrayBuffer();
       
       const { data, error } = await supabase.storage
-        .from('product-images')
+        .from('gold-nexus-images')
         .upload(file.name, buffer, {
           contentType: file.type,
           upsert: true,
@@ -32,7 +36,7 @@ const uploadImagesHandler: AdminApiHandler = async (req) => {
        } else {
          // Construct public URL
          const { data: { publicUrl } } = supabase.storage
-           .from('product-images')
+           .from('gold-nexus-images')
            .getPublicUrl(data.path);
            
          results.push({ name: file.name, status: 'success', url: publicUrl });

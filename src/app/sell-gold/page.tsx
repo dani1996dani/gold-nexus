@@ -19,8 +19,6 @@ import { CheckCircle, AlertTriangle } from 'lucide-react';
 import { CountryDropdown, Country } from '@/components/ui/country-dropdown';
 import { countries } from 'country-data-list';
 import { FileUploader } from '@/components/ui/file-uploader';
-import { supabase } from '@/lib/supabase';
-import { v4 as uuidv4 } from 'uuid';
 import { Karat } from '@/generated/prisma/client';
 
 export default function SellGoldPage() {
@@ -71,20 +69,32 @@ export default function SellGoldPage() {
     setSubmissionState({ status: 'submitting', message: 'Uploading images...' });
 
     try {
-      const uploadPromises = files.map(file => {
-        const filePath = `lead-photos/${uuidv4()}-${file.name}`;
-        return supabase.storage.from('gold-nexus-leads').upload(filePath, file);
-      });
-
-      const uploadedFileResults = await Promise.all(uploadPromises);
-      
       const photoUrls: string[] = [];
-      for (const result of uploadedFileResults) {
-        if (result.error) {
-          throw new Error(`Failed to upload image: ${result.error.message}`);
+
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const uploadRes = await fetch('/api/leads/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          let errorMessage = `Upload failed (${uploadRes.status})`;
+          try {
+            const errorData = await uploadRes.json();
+            errorMessage = errorData.message || errorMessage;
+          } catch (e) {
+            // If not JSON, it might be an HTML error page from Next.js
+            const text = await uploadRes.text();
+            console.error('Non-JSON error response:', text);
+          }
+          throw new Error(errorMessage);
         }
-        const { data: urlData } = supabase.storage.from('gold-nexus-leads').getPublicUrl(result.data.path);
-        photoUrls.push(urlData.publicUrl);
+
+        const data = await uploadRes.json();
+        photoUrls.push(data.url);
       }
       
       setSubmissionState({ status: 'submitting', message: 'Submitting inquiry...' });
