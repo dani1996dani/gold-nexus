@@ -3,12 +3,13 @@
 import { prisma } from '@/lib/db';
 import { StockStatus, ProductCategory } from '@/generated/prisma/client';
 import { Decimal } from '@prisma/client-runtime-utils';
+import { faker } from '@faker-js/faker';
 
 async function main() {
   console.log('Start seeding...');
   
   console.log('Seeding Karat values...');
-  await prisma.karat.deleteMany({});
+  // await prisma.karat.deleteMany({});
   const karatData = [
     { name: '24K', purity: new Decimal(0.999) },
     { name: '22K', purity: new Decimal(0.9167) },
@@ -29,8 +30,8 @@ async function main() {
   }
   console.log('Karat seeding finished.');
 
-  await prisma.product.deleteMany({});
-  console.log('Deleted existing products.');
+  // await prisma.product.deleteMany({});
+  // console.log('Deleted existing products.');
 
   const products = [
     {
@@ -88,10 +89,12 @@ async function main() {
   ];
 
   for (const productData of products) {
-    const product = await prisma.product.create({
-      data: productData,
+    const product = await prisma.product.upsert({
+      where: { sku: productData.sku },
+      update: {},
+      create: productData,
     });
-    console.log(`Created product with id: ${product.id}`);
+    console.log(`Upserted product with id: ${product.id}`);
   }
 
   console.log('Seeding finished for products.');
@@ -107,12 +110,102 @@ async function main() {
       password: '$argon2id$v=19$m=65536,t=3,p=4$mr2LyUzQoaeaXy41n3Sb/A$/r3M579MT+7//7eM9KdT2lfNu6QHpXJTPMElvsKUvxE',
       country: 'Canada',
       phoneNumber: '4374355140',
-      role: 'USER',
+      role: 'ADMIN',
       createdAt: '2025-12-16T00:24:40.326Z',
       updatedAt: '2025-12-16T00:24:40.326Z',
     },
   });
   console.log(`Upserted user with id: ${user.id}`);
+
+  console.log('Seeding 58 orders...');
+  await prisma.orderItem.deleteMany({});
+  await prisma.order.deleteMany({});
+  
+  // Fetch a product to link to order items
+  const seedProduct = await prisma.product.findFirst();
+  
+  if (seedProduct) {
+      const orderPromises = [];
+      for (let i = 1; i <= 58; i++) {
+        // Create a fake user for each order to have realistic names in the order list
+        const fakeUser = await prisma.user.create({
+            data: {
+                email: faker.internet.email(),
+                fullName: faker.person.fullName(),
+                password: 'placeholder-hash', // Not for login
+                country: faker.location.country(),
+                phoneNumber: faker.phone.number(),
+                role: 'USER',
+            }
+        });
+
+        const orderStatus = faker.helpers.arrayElement(['COMPLETED', 'PROCESSING', 'PENDING']);
+        
+        orderPromises.push(
+          prisma.order.create({
+            data: {
+              userId: fakeUser.id,
+              status: orderStatus,
+              totalAmount: new Decimal(faker.finance.amount({ min: 500, max: 10000 })),
+              createdAt: faker.date.recent({ days: 60 }),
+              shippingAddressJson: {
+                street: faker.location.streetAddress(),
+                city: faker.location.city(),
+                state: faker.location.state(),
+                zip: faker.location.zipCode(),
+                country: faker.location.country()
+              },
+              items: {
+                create: {
+                  productId: seedProduct.id,
+                  quantity: faker.number.int({ min: 1, max: 5 }),
+                  priceAtPurchase: seedProduct.price,
+                }
+              }
+            }
+          })
+        );
+      }
+      await Promise.all(orderPromises);
+      console.log('Orders seeded.');
+  } else {
+      console.warn('No products found to seed orders.');
+  }
+
+  console.log('Seeding 58 leads...');
+  await prisma.secondHandLead.deleteMany({});
+  
+  const leadImages = [
+    'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/TEST-JEWELRY-1.png',
+    'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/TEST-COIN-1.png',
+    'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/TEST-BAR-1.png'
+  ];
+
+  const leadPromises = [];
+  for (let i = 1; i <= 58; i++) {
+    const leadStatus = faker.helpers.arrayElement(['CLOSED', 'CONTACTED', 'SUBMITTED']);
+    
+    leadPromises.push(
+      prisma.secondHandLead.create({
+        data: {
+          fullName: faker.person.fullName(),
+          email: faker.internet.email(),
+          phoneNumber: faker.phone.number(),
+          country: faker.location.country(),
+          city: faker.location.city(),
+          itemType: faker.helpers.arrayElement(['Jewelry', 'Coin', 'Bar', 'Other']),
+          estimatedWeight: faker.number.int({ min: 5, max: 100 }).toString(),
+          estimatedKarat: faker.helpers.arrayElement(['10K', '14K', '18K', '22K', '24K']),
+          estimatedValue: new Decimal(faker.finance.amount({ min: 100, max: 5000 })),
+          photoUrls: [faker.helpers.arrayElement(leadImages)],
+          status: leadStatus,
+          createdAt: faker.date.recent({ days: 30 }),
+        }
+      })
+    );
+  }
+  await Promise.all(leadPromises);
+  console.log('Leads seeded.');
   
   console.log('Seeding finished.');
 }

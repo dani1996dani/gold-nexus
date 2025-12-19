@@ -26,13 +26,17 @@ export async function getLeads(
 
   const totalPages = Math.ceil(total / limit);
 
-  // Safely parse photoUrls for each lead
+  // Safely parse photoUrls for each lead and serialize Decimal
   const leadsWithParsedPhotos = leads.map(lead => {
     const photoUrls: string[] =
       lead.photoUrls && Array.isArray(lead.photoUrls)
         ? lead.photoUrls.filter((item): item is string => typeof item === 'string')
         : [];
-    return { ...lead, photoUrls };
+    return { 
+      ...lead, 
+      photoUrls,
+      estimatedValue: lead.estimatedValue ? lead.estimatedValue.toString() : null
+    };
   });
 
   return {
@@ -64,5 +68,9 @@ export async function getLeadById(id: string) {
       ? lead.photoUrls.filter((item): item is string => typeof item === 'string')
       : [];
 
-  return { ...lead, photoUrls };
+  return { 
+    ...lead, 
+    photoUrls,
+    estimatedValue: lead.estimatedValue ? lead.estimatedValue.toString() : null 
+  };
 }
