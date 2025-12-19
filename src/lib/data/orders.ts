@@ -14,14 +14,18 @@ export async function getOrders(
 ) {
   const skip = (page - 1) * limit;
 
-  let orderBy: any = { [sortBy]: sortOrder };
+  // Define allowed sort keys to prevent 'any' usage
+  const allowedSortKeys = ['totalAmount', 'displayId', 'status', 'createdAt'] as const;
+  type AllowedSortKey = typeof allowedSortKeys[number];
+
+  let orderBy: Record<string, any> = {};
 
   if (sortBy === 'customer') {
     orderBy = { user: { fullName: sortOrder } };
-  } else if (sortBy === 'totalAmount' || sortBy === 'displayId' || sortBy === 'status' || sortBy === 'createdAt') {
+  } else if (allowedSortKeys.includes(sortBy as AllowedSortKey)) {
     orderBy = { [sortBy]: sortOrder };
   } else {
-    // Fallback
+    // Fallback default
     orderBy = { createdAt: 'desc' };
   }
 
