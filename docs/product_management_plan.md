@@ -58,7 +58,9 @@ This phase implements the CSV import functionality, leveraging the image managem
 
 ## ✅ Phase 4: Human Review
 
-- [ ] **Backend (API):**
+- [x] **Pagination Fixes:**
+  - [x] Pagination loop in products table fixed (was caused by search component resetting page).
+  - [x] Pagination buttons alignment and structure fixed in Products, Orders, and Leads tables.
 - [x] **Frontend (UI):**
   - [x] in bulk import page. in csv file thing, Download template is a csv. maybe better to give excel file? (Decided to stick with CSV for MVP simplicity and explicitly labeled it).
   - [x] in bulk import page, there is text "CSV only", will it support excel files or we need to code it up? (Confirmed CSV only for MVP).
@@ -71,8 +73,8 @@ This phase implements the CSV import functionality, leveraging the image managem
     - [x] there is too much padding on the top of each table in admin panel, no? the table headers are too far down. fix it for all tables in admin panel (3 tables)
     - [x] in the product id page, in the Status & Organization div, make all value divs the same width. also, Active (visible to customers) is taking 2 rows... either make the text shorter or do a tooltip.
     - [x] in 'download csv template' button, add like 3 dummy products that exaplin how to fill up the CSV file. 
-    - [ ] pagination is broken in products table. does not work at all. (test in other tables as well!!!)
-    - [ ] pagination buttons are not on the same alignement row in product. 
+    - [x] pagination is broken in products table. does not work at all. (test in other tables as well!!!)
+    - [x] pagination buttons are not on the same alignment row in product.  
   [x] **QA:**
     - [x] generate a csv file for me. actually two. 1 with 3 products. and 1 file with 58 products. just the csvs. you can write them in the /docs folder.
 ---

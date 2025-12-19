@@ -15,13 +15,17 @@ export function ProductSearch() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set('search', value);
-      } else {
-        params.delete('search');
+      const currentSearch = params.get('search') || '';
+
+      if (value !== currentSearch) {
+        if (value) {
+          params.set('search', value);
+        } else {
+          params.delete('search');
+        }
+        params.set('page', '1'); // Reset page on search
+        router.push(`${pathname}?${params.toString()}`);
       }
-      params.set('page', '1'); // Reset page on search
-      router.push(`${pathname}?${params.toString()}`);
     }, 500);
 
     return () => clearTimeout(timer);

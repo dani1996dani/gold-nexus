@@ -104,19 +104,19 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
             <div className="flex-1 text-sm text-muted-foreground">
                 Page {page} of {totalPages}
             </div>
-            <div className="space-x-2">
-                <Link href={page > 1 ? `/admin/orders?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
-                    <Button variant="outline" size="sm" disabled={page <= 1}>
+            <div className="space-x-2 flex flex-row justify-center items-center">
+                <Button variant="outline" size="sm" disabled={page <= 1} asChild>
+                    <Link href={page > 1 ? `/admin/orders?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
                         <ChevronLeft className="h-4 w-4" />
                         Previous
-                    </Button>
-                </Link>
-                <Link href={page < totalPages ? `/admin/orders?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
-                    <Button variant="outline" size="sm" disabled={page >= totalPages}>
+                    </Link>
+                </Button>
+                <Button variant="outline" size="sm" disabled={page >= totalPages} asChild>
+                    <Link href={page < totalPages ? `/admin/orders?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
                         Next
                         <ChevronRight className="h-4 w-4" />
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
             </div>
         </div>
     </div>

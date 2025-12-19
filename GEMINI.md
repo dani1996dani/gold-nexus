@@ -87,6 +87,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
   - `[ ]` Make all errors show a toast instead of alerts or console logs etc
 - `[ ]` **Editable User Profile:**
     - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
+- [ ] add pagination (infi scroll) in live market (probably needs some BE work as well)
 - `[ ]` **create a custom 404 page?**
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment

@@ -38,27 +38,29 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-           <h1 className="text-2xl font-semibold">Leads</h1>
-           <p className="text-sm text-muted-foreground">Review and manage all incoming inquiries from users wanting to sell their gold.</p>
+          <h1 className="text-2xl font-semibold">Leads</h1>
+          <p className="text-sm text-muted-foreground">
+            Review and manage all incoming inquiries from users wanting to sell their gold.
+          </p>
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>
-                    <SortableColumn column="createdAt" label="Date" />
+                  <SortableColumn column="createdAt" label="Date" />
                 </TableHead>
                 <TableHead>
-                    <SortableColumn column="fullName" label="Name" />
+                  <SortableColumn column="fullName" label="Name" />
                 </TableHead>
                 <TableHead>
-                    <SortableColumn column="email" label="Email" />
+                  <SortableColumn column="email" label="Email" />
                 </TableHead>
                 <TableHead>
-                    <SortableColumn column="status" label="Status" />
+                  <SortableColumn column="status" label="Status" />
                 </TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
@@ -91,27 +93,39 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
           )}
         </CardContent>
       </Card>
-      
-       {/* Pagination Controls */}
-       <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="flex-1 text-sm text-muted-foreground">
-                Page {page} of {totalPages}
-            </div>
-            <div className="space-x-2">
-                <Link href={page > 1 ? `/admin/leads?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
-                    <Button variant="outline" size="sm" disabled={page <= 1}>
-                        <ChevronLeft className="h-4 w-4" />
-                        Previous
-                    </Button>
-                </Link>
-                <Link href={page < totalPages ? `/admin/leads?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
-                    <Button variant="outline" size="sm" disabled={page >= totalPages}>
-                        Next
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
-                </Link>
-            </div>
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          Page {page} of {totalPages}
         </div>
+        <div className="flex flex-row items-center justify-center space-x-2">
+          <Button variant="outline" size="sm" disabled={page <= 1} asChild>
+            <Link
+              href={
+                page > 1
+                  ? `/admin/leads?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+                  : '#'
+              }
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" disabled={page >= totalPages} asChild>
+            <Link
+              href={
+                page < totalPages
+                  ? `/admin/leads?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+                  : '#'
+              }
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
