@@ -1,4 +1,0 @@
-sku,name,description,price,weight,karat,category,vendorName,stockStatus
-TEST-BAR-1,100g Gold Bar,99.99% Fine Gold Bar,6500.00,100g,24K,BAR,Valcambi,IN_STOCK
-TEST-COIN-1,1oz Krugerrand,South African Gold Coin,2050.00,1oz,22K,COIN,Rand Refinery,IN_STOCK
-TEST-JEWELRY-1,Gold Bracelet,18K Gold Link Bracelet,1200.00,10g,18K,JEWELRY,Gold Nexus,OUT_OF_STOCK
