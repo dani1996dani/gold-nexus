@@ -15,6 +15,8 @@ import { getLeads } from '@/lib/data/leads';
 import { formatDate } from '@/lib/utils';
 import { SortableColumn } from '@/components/admin/sortable-column';
 
+import { ClickableTableRow } from '@/components/admin/clickable-table-row';
+
 interface LeadsPageProps {
   searchParams: Promise<{
     page?: string;
@@ -69,7 +71,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
             </TableHeader>
             <TableBody>
               {leads.map((lead) => (
-                <TableRow key={lead.id}>
+                <ClickableTableRow key={lead.id} href={`/admin/leads/${lead.id}`}>
                   <TableCell>{formatDate(lead.createdAt)}</TableCell>
                   <TableCell className="font-medium">{lead.fullName}</TableCell>
                   <TableCell>{lead.email}</TableCell>
@@ -83,7 +85,7 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
                       </Button>
                     </Link>
                   </TableCell>
-                </TableRow>
+                </ClickableTableRow>
               ))}
             </TableBody>
           </Table>

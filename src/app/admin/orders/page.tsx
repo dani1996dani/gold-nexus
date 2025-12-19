@@ -16,6 +16,8 @@ import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { formatDate } from '@/lib/utils';
 import { SortableColumn } from '@/components/admin/sortable-column';
 
+import { ClickableTableRow } from '@/components/admin/clickable-table-row';
+
 interface OrdersPageProps {
   searchParams: Promise<{
     page?: string;
@@ -71,7 +73,7 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
             </TableHeader>
             <TableBody>
                 {orders.map((order) => (
-                <TableRow key={order.id}>
+                <ClickableTableRow key={order.id} href={`/admin/orders/${order.id}`}>
                     <TableCell className="font-medium">#{order.displayId}</TableCell>
                     <TableCell>{order.user.fullName}</TableCell>
                     <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
@@ -86,7 +88,7 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
                         </Button>
                     </Link>
                     </TableCell>
-                </TableRow>
+                </ClickableTableRow>
                 ))}
             </TableBody>
             </Table>

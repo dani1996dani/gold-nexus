@@ -18,6 +18,8 @@ import { ProductActions } from '@/components/admin/product-actions';
 import { SortableColumn } from '@/components/admin/sortable-column';
 import { ProductSearch } from '@/components/admin/product-search';
 
+import { ClickableTableRow } from '@/components/admin/clickable-table-row';
+
 interface ProductsPageProps {
   searchParams: Promise<{
     page?: string;
@@ -93,7 +95,7 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
                 </TableRow>
               ) : (
                 products.map((product) => (
-                  <TableRow key={product.id}>
+                  <ClickableTableRow key={product.id} href={`/admin/products/${product.id}/edit`}>
                     <TableCell>
                       <div className="relative h-10 w-10 overflow-hidden rounded-md border bg-muted">
                         <Image
@@ -124,7 +126,7 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
                     <TableCell>
                       <ProductActions productId={product.id} productName={product.name} />
                     </TableCell>
-                  </TableRow>
+                  </ClickableTableRow>
                 ))
               )}
             </TableBody>
