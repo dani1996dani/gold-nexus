@@ -76,7 +76,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - `[x]` **"Sell Gold" Form Submission (API):**
     - `[x]` Build `POST /api/leads` endpoint and connect the frontend form.
 - `[ ]` **Admin Panel Backend APIs & Frontend pages:**
-    - `[ ]` Product Management (Create, Update, Bulk Import).
+    - `[x]` Product Management (Create, Update, Bulk Import).
     - `[x]` Order Management (View all orders).
     - `[x]` Lead Management (View all leads).
     - `[x]` make navbar options for admin to navigate to admin panel. (only if admin)
