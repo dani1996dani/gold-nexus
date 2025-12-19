@@ -10,32 +10,59 @@ import { NextRequest } from 'next/server';
  * This can be used by both Server Components (which don't have a request object) 
  * and API routes (which do).
  * @param req Optional NextRequest object from an API route.
+ * @param options Configuration options.
  * @returns The admin user object (without password) or null if not authenticated or not an admin.
  */
-export async function getAuthenticatedAdmin(req?: NextRequest): Promise<Omit<User, 'password'> | null> {
-  let token: string | undefined;
+export async function getAuthenticatedAdmin(
+  req?: NextRequest, 
+  options: { allowRefresh?: boolean } = { allowRefresh: false }
+): Promise<Omit<User, 'password'> | null> {
+  let accessToken: string | undefined;
+  let refreshToken: string | undefined;
 
   if (req) {
-    token = (await req.cookies).get('accessToken')?.value;
+    accessToken = (await req.cookies).get('accessToken')?.value;
+    refreshToken = (await req.cookies).get('refreshToken')?.value;
   } else {
     // We must be in a Server Component, so we can use next/headers
-    token = (await cookies()).get('accessToken')?.value;
+    const cookieStore = await cookies();
+    accessToken = cookieStore.get('accessToken')?.value;
+    refreshToken = cookieStore.get('refreshToken')?.value;
   }
 
-  if (!token) {
-    return null;
-  }
+  const { publicKey } = getJwtKeys();
 
-  try {
-    const { publicKey } = getJwtKeys();
-    const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
-
-    if (decoded.role !== Role.ADMIN) {
-      return null;
+  // 1. Try Access Token
+  if (accessToken) {
+    try {
+      const decoded = jwt.verify(accessToken, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
+      if (decoded.role === Role.ADMIN) {
+        return await fetchAdminUser(decoded.userId);
+      }
+    } catch (error) {
+      // Access token invalid/expired. Fall through to refresh token check if allowed.
     }
+  }
 
+  // 2. Try Refresh Token (Fallback)
+  if (options.allowRefresh && refreshToken) {
+    try {
+      const decoded = jwt.verify(refreshToken, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
+      if (decoded.role === Role.ADMIN) {
+        return await fetchAdminUser(decoded.userId);
+      }
+    } catch (error) {
+      console.error('Refresh token auth check failed:', error);
+    }
+  }
+
+  return null;
+}
+
+async function fetchAdminUser(userId: string) {
+  try {
     const admin = await prisma.user.findUnique({
-      where: { id: decoded.userId, role: Role.ADMIN },
+      where: { id: userId, role: Role.ADMIN },
     });
     
     if (!admin) {
@@ -44,10 +71,8 @@ export async function getAuthenticatedAdmin(req?: NextRequest): Promise<Omit<Use
     
     const { password, ...adminWithoutPassword } = admin;
     return adminWithoutPassword;
-
   } catch (error) {
-    // This will catch expired tokens, invalid signatures, etc.
-    console.error('Auth check failed:', error);
+    console.error('Database auth fetch failed:', error);
     return null;
   }
 }

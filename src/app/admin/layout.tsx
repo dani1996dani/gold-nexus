@@ -5,7 +5,9 @@ import { getAuthenticatedAdmin } from '@/lib/data/auth';
 import { AdminSidebarNav } from '@/components/admin/admin-sidebar-nav';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const admin = await getAuthenticatedAdmin();
+  // Allow refresh token check for initial page load to prevent "Access Denied" flash
+  // The client-side AuthProvider will handle the actual token rotation.
+  const admin = await getAuthenticatedAdmin(undefined, { allowRefresh: true });
 
   if (!admin) {
     return <UnauthorizedAccess />;
