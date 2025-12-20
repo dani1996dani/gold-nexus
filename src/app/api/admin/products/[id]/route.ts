@@ -35,6 +35,7 @@ const productUpdateSchema = z.object({
   vendorName: z.string().min(1, 'Vendor name is required').optional(),
   stockStatus: z.enum(['IN_STOCK', 'OUT_OF_STOCK']).optional(),
   isActive: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
 });
 
 const putHandler: AdminApiHandler = async (req, context) => {

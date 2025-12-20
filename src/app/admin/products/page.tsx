@@ -67,20 +67,23 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[80px]">Image</TableHead>
-                <TableHead>
+                <TableHead className="w-[60px]">Image</TableHead>
+                <TableHead className="w-[150px]">
                   <SortableColumn column="sku" label="SKU" />
                 </TableHead>
                 <TableHead>
                   <SortableColumn column="name" label="Name" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[250px]">
                   <SortableColumn column="stockStatus" label="Stock Status" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[200px]">
                   <SortableColumn column="isActive" label="Active" />
                 </TableHead>
-                <TableHead className="text-right">
+                <TableHead className="w-[200px]">
+                  <SortableColumn column="isFeatured" label="Featured" />
+                </TableHead>
+                <TableHead className="w-[200px] text-right">
                   <SortableColumn column="price" label="Price" />
                 </TableHead>
                 <TableHead className="w-[50px]"></TableHead>
@@ -89,7 +92,7 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
             <TableBody>
               {products.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-10 text-center">
+                  <TableCell colSpan={8} className="py-10 text-center">
                     No products found.
                   </TableCell>
                 </TableRow>
@@ -106,7 +109,9 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
                         />
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{product.sku}</TableCell>
+                    <TableCell className="max-w-[150px] truncate font-medium">
+                      {product.sku}
+                    </TableCell>
                     <TableCell className="max-w-[200px] truncate" title={product.name}>
                       {product.name}
                     </TableCell>
@@ -119,6 +124,18 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
                       <Badge variant={product.isActive ? 'default' : 'secondary'}>
                         {product.isActive ? 'Active' : 'Inactive'}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {product.isFeatured ? (
+                        <Badge
+                          variant="outline"
+                          className="border-yellow-500 bg-yellow-50 text-yellow-600"
+                        >
+                          Featured
+                        </Badge>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       {formatCurrency(Number(product.price))}

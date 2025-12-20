@@ -51,22 +51,22 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="w-[150px]">
                   <SortableColumn column="displayId" label="Order ID" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[300px]">
                   <SortableColumn column="customer" label="Customer" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[150px]">
                   <SortableColumn column="totalAmount" label="Total" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[180px]">
                   <SortableColumn column="status" label="Status" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[180px]">
                   <SortableColumn column="createdAt" label="Date" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[100px]">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>

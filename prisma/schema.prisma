@@ -69,6 +69,7 @@ model Product {
   vendorName    String
   stockStatus   StockStatus     @default(IN_STOCK)
   isActive      Boolean         @default(true)
+  isFeatured    Boolean         @default(false)
   orderItems    OrderItem[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt

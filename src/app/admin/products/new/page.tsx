@@ -34,6 +34,7 @@ const productSchema = z.object({
   vendorName: z.string().min(1, 'Vendor name is required'),
   stockStatus: z.enum(['IN_STOCK', 'OUT_OF_STOCK']),
   isActive: z.boolean(),
+  isFeatured: z.boolean().optional(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -60,6 +61,7 @@ export default function NewProductPage() {
       imageUrl: '',
       vendorName: '',
       isActive: true,
+      isFeatured: false,
       stockStatus: 'IN_STOCK',
     },
   });
@@ -213,6 +215,26 @@ export default function NewProductPage() {
                     />
                     <Label htmlFor="isActive" className="cursor-pointer text-sm font-normal">
                       Active Product
+                    </Label>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Featured Product</Label>
+                  <div className="flex h-10 items-center space-x-2 rounded-md border px-3">
+                    <Controller
+                      control={control}
+                      name="isFeatured"
+                      render={({ field }) => (
+                        <Checkbox
+                          id="isFeatured"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <Label htmlFor="isFeatured" className="cursor-pointer text-sm font-normal">
+                      Show on homepage
                     </Label>
                   </div>
                 </div>

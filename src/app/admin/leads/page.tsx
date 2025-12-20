@@ -52,19 +52,19 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="w-[180px]">
                   <SortableColumn column="createdAt" label="Date" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[200px]">
                   <SortableColumn column="fullName" label="Name" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[400px]">
                   <SortableColumn column="email" label="Email" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[180px]">
                   <SortableColumn column="status" label="Status" />
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[100px]">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>

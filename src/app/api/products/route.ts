@@ -19,13 +19,15 @@ export async function GET(request: NextRequest) {
       ? (categoriesParam.split(',').filter(Boolean) as ProductCategory[])
       : [];
 
+    const isFeatured = searchParams.get('featured') === 'true';
+
     const where: Prisma.ProductWhereInput = {
       isActive: true,
+      ...(isFeatured && { isFeatured: true }),
       ...(categories.length > 0 && {
         category: { in: categories },
       }),
     };
-
     // 3. Sorting
     const sortBy = searchParams.get('sortBy') || 'price-asc';
     let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };

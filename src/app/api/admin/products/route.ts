@@ -44,6 +44,7 @@ const productSchema = z.object({
   vendorName: z.string().min(1, 'Vendor name is required'),
   stockStatus: z.enum(['IN_STOCK', 'OUT_OF_STOCK']),
   isActive: z.boolean(),
+  isFeatured: z.boolean().optional(),
 });
 
 const postProductsHandler: AdminApiHandler = async (req) => {

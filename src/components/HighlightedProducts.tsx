@@ -8,7 +8,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
   try {
     // We must use an absolute URL for fetches within Server Components
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    const res = await fetch(`${baseUrl}/api/products?limit=4`, {
+    const res = await fetch(`${baseUrl}/api/products?limit=4&featured=true`, {
       cache: 'no-store', // Ensures we get fresh data on every request
     });
 
