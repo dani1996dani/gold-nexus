@@ -8,7 +8,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
   try {
     // We must use an absolute URL for fetches within Server Components
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    const res = await fetch(`${baseUrl}/api/products`, {
+    const res = await fetch(`${baseUrl}/api/products?limit=4`, {
       cache: 'no-store', // Ensures we get fresh data on every request
     });
 
@@ -17,9 +17,8 @@ async function getFeaturedProducts(): Promise<Product[]> {
       return []; // Return an empty array on error to prevent the page from crashing
     }
 
-    const allProducts: Product[] = await res.json();
-    // Return the first 4 products from the list (since the API sorts by newest)
-    return allProducts.slice(0, 4);
+    const data = await res.json();
+    return data.products || [];
   } catch (error) {
     console.error('Error in getFeaturedProducts:', error);
     return [];
