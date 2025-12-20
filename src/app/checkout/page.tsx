@@ -180,7 +180,7 @@ const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
                       render={({ field }) => (
                         <CountryDropdown
                           onChange={(country: Country) => field.onChange(country)}
-                          value={field.value}
+                          value={field.value || undefined}
                         />
                       )}
                     />
