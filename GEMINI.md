@@ -99,6 +99,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - `[ ]` add pagination (infi scroll) in live market (probably needs some BE work as well)
 - `[ ]` **create a custom 404 page?**
 - `[ ]` **admin panel is seen on mobile in navbar but im fully locked out on mobile?? no matter how much i refresh??**
+- `[x]` **fix gold price. it barely updates. maybe set up a cron job on cron-job.org?**
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
 

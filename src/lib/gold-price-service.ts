@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db';
 
 const GOLD_PRICE_ID = 'XAU_USD';
-const STALE_AFTER_MS = 1000 * 60 * 60; // 1 hour
+const STALE_AFTER_MS = 1000 * 60 * 25; // 25 minutes (to accommodate 30 min cron)
 
 interface SwissquoteResponse {
   topo: {
@@ -41,7 +41,7 @@ async function fetchExternalGoldPrice(): Promise<number | null> {
   }
 }
 
-export async function getLiveGoldPrice() {
+export async function getLiveGoldPrice(force = false) {
   const existingPrice = await prisma.goldPrice.findUnique({
     where: { id: GOLD_PRICE_ID },
   });
@@ -49,11 +49,15 @@ export async function getLiveGoldPrice() {
   const isStale =
     !existingPrice || new Date().getTime() - existingPrice.updatedAt.getTime() > STALE_AFTER_MS;
 
-  if (!isStale) {
+  if (!isStale && !force) {
     return existingPrice;
   }
 
-  console.log('Gold price is stale. Fetching new price from external API...');
+  if (force) {
+    console.log('[GOLD-PRICE] Force update requested. Fetching from external API...');
+  } else {
+    console.log('Gold price is stale. Fetching new price from external API...');
+  }
   const newExternalPrice = await fetchExternalGoldPrice();
 
   if (newExternalPrice === null) {

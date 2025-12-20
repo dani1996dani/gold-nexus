@@ -8,21 +8,25 @@ import { headers } from 'next/headers';
 export async function POST() {
   const headersList = await headers();
   const cronSecretHeader = headersList.get('x-vercel-cron-secret');
+  const authHeader = headersList.get('authorization');
   const cronSecretEnv = process.env.CRON_SECRET;
 
   if (!cronSecretEnv) {
     console.error('[CRON] CRON_SECRET environment variable is not set. Denying request.');
-    // Don't expose internal config details in the response
     return NextResponse.json({ message: 'Configuration error' }, { status: 500 });
   }
 
-  if (cronSecretHeader !== cronSecretEnv) {
+  // Support both Vercel's native header and a standard Bearer token for external services like cron-job.org
+  const isAuthorized =
+    cronSecretHeader === cronSecretEnv || authHeader === `Bearer ${cronSecretEnv}`;
+
+  if (!isAuthorized) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     console.log('[CRON] Authorized request received. Fetching new gold price...');
-    const goldPriceData = await getLiveGoldPrice();
+    const goldPriceData = await getLiveGoldPrice(true);
     console.log('[CRON] Successfully updated gold price.');
     return NextResponse.json({
       message: 'Gold price updated successfully',
