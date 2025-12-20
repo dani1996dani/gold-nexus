@@ -75,7 +75,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
   - `[x]` Build `GET /api/gold-price` endpoint. https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD
 - `[x]` **"Sell Gold" Form Submission (API):**
     - `[x]` Build `POST /api/leads` endpoint and connect the frontend form.
-- `[]` **Admin Panel Backend APIs & Frontend pages:**
+- `[x]` **Admin Panel Backend APIs & Frontend pages:**
     - `[x]` Product Management (Create, Update, Bulk Import).
     - `[x]` Order Management (View all orders).
     - `[x]` Lead Management (View all leads).
@@ -84,7 +84,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[x]` fix race condition of detecting if user is admin or not and showing the "access denied" page.
     - `[x]` show loading skeleton for 3 tables, and 3 [id] pages in admin panel. in stg, the wait is about 1-2 seconds. the "loading x" text is ugly. a simple skelton will do.
     - `[x]` (get rid of update status in leads page, and do it in the field like order management)
-- `[ ]` **Error display in FE:**
+- `[x]` **Error display in FE:**
   - `[x]` Make all errors show a toast instead of alerts or console logs etc
   - `[x]` Country dropdown validation text in checkout is horrible, need custom text. (maybe needed in all places with country dropdown)
 - `[ ]` **Editable User Profile:**
