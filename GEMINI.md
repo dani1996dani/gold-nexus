@@ -82,12 +82,13 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[x]` make navbar options for admin to navigate to admin panel. (only if admin)
     - `[ ]` lead management page is BROKEN on mobile view. think if need to fix
     - `[ ]` fix race condition of detecting if user is admin or not and showing the "access denied" page.
+    - `[x]` show loading skeleton for 3 tables, and 3 [id] pages in admin panel. in stg, the wait is about 1-2 seconds. the "loading x" text is ugly. a simple skelton will do.
     - `[x]` (get rid of update status in leads page, and do it in the field like order management)
 - `[ ]` **Error display in FE:**
   - `[ ]` Make all errors show a toast instead of alerts or console logs etc
 - `[ ]` **Editable User Profile:**
     - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
-- [ ] add pagination (infi scroll) in live market (probably needs some BE work as well)
+- `[ ]` add pagination (infi scroll) in live market (probably needs some BE work as well)
 - `[ ]` **create a custom 404 page?**
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
