@@ -12,7 +12,7 @@ export async function GET() {
 
     // Prisma's Decimal type is not directly serializable to JSON.
     // We need to convert it to a string or number for the API response.
-    const serializableKarats = karats.map(k => ({
+    const serializableKarats = karats.map((k) => ({
       ...k,
       purity: k.purity.toString(),
     }));

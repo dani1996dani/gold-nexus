@@ -80,7 +80,7 @@ const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
         shippingAddress: {
           ...data,
         },
-        cartItems: items.map(item => ({ id: item.id, quantity: item.quantity })),
+        cartItems: items.map((item) => ({ id: item.id, quantity: item.quantity })),
       };
 
       const res = await fetch('/api/orders/create', {
@@ -97,14 +97,13 @@ const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
       }
 
       const { orderId } = await res.json();
-      
+
       // Prevent "Empty Cart" flash by setting this state first
       onOrderPlaced();
-      
+
       clearCart();
       router.push(`/order-confirmation/${orderId}`);
       toast.success('Order placed successfully!');
-
     } catch (error: any) {
       toast.error(error.message || 'Failed to process payment. Please try again.');
     } finally {
@@ -306,76 +305,78 @@ const PleaseLogin = () => {
 };
 
 const EmptyCart = () => (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
-      <ShoppingCart className="h-20 w-20 text-gray-300" />
-      <div>
-        <h2 className="font-serif text-3xl font-medium">Your Cart is Empty</h2>
-        <p className="mt-2 text-muted-foreground">You can&#39;t proceed to checkout without any items.</p>
-      </div>
-      <Link href="/marketplace">
-        <Button className="rounded-md bg-black font-semibold text-white hover:bg-neutral-800">
-          Return to Marketplace
-        </Button>
-      </Link>
+  <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
+    <ShoppingCart className="h-20 w-20 text-gray-300" />
+    <div>
+      <h2 className="font-serif text-3xl font-medium">Your Cart is Empty</h2>
+      <p className="mt-2 text-muted-foreground">
+        You can&#39;t proceed to checkout without any items.
+      </p>
     </div>
-  );
-  
-  const CheckoutSkeleton = () => (
-    <div className="min-h-screen w-full animate-pulse bg-[#F9F9F9] px-4 py-12 sm:px-6 lg:px-8">
-      <main className="mx-auto max-w-6xl">
-        <Skeleton className="mb-8 h-12 w-1/3" />
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
-          <Card className="border-neutral-200 bg-white shadow-none">
-            <CardHeader>
-              <Skeleton className="h-8 w-1/2" />
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-1/4" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-1/4" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-neutral-200 bg-white shadow-none">
-            <CardHeader>
-              <Skeleton className="h-8 w-1/2" />
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-16 w-16 rounded-md" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-3 w-16" />
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-16 w-16 rounded-md" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-3 w-16" />
-                </div>
-              </div>
-              <Separator />
+    <Link href="/marketplace">
+      <Button className="rounded-md bg-black font-semibold text-white hover:bg-neutral-800">
+        Return to Marketplace
+      </Button>
+    </Link>
+  </div>
+);
+
+const CheckoutSkeleton = () => (
+  <div className="min-h-screen w-full animate-pulse bg-[#F9F9F9] px-4 py-12 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-6xl">
+      <Skeleton className="mb-8 h-12 w-1/3" />
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
+        <Card className="border-neutral-200 bg-white shadow-none">
+          <CardHeader>
+            <Skeleton className="h-8 w-1/2" />
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-1/4" />
               <Skeleton className="h-10 w-full" />
-              <Separator />
-              <Skeleton className="h-12 w-full" />
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
-  );
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-neutral-200 bg-white shadow-none">
+          <CardHeader>
+            <Skeleton className="h-8 w-1/2" />
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-16 w-16 rounded-md" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-16 w-16 rounded-md" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+            </div>
+            <Separator />
+            <Skeleton className="h-10 w-full" />
+            <Separator />
+            <Skeleton className="h-12 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  </div>
+);

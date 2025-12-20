@@ -24,7 +24,7 @@ export function SortableColumn({ column, label, className }: SortableColumnProps
 
   const toggleSort = () => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (isSorted) {
       // Toggle order
       params.set('sortOrder', isAsc ? 'desc' : 'asc');
@@ -33,7 +33,7 @@ export function SortableColumn({ column, label, className }: SortableColumnProps
       params.set('sortBy', column);
       params.set('sortOrder', 'asc');
     }
-    
+
     // Reset page to 1 when sorting changes
     params.set('page', '1');
 
@@ -44,7 +44,7 @@ export function SortableColumn({ column, label, className }: SortableColumnProps
     <Button
       variant="ghost"
       onClick={toggleSort}
-      className={cn("-ml-4 h-8 data-[state=open]:bg-accent", className)}
+      className={cn('-ml-4 h-8 data-[state=open]:bg-accent', className)}
     >
       <span>{label}</span>
       {isSorted ? (

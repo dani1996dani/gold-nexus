@@ -84,15 +84,11 @@ const CountryDropdownComponent = (
               <CircleFlag countryCode={value.alpha2.toLowerCase()} height={20} />
             </div>
             {slim === false && (
-              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {value.name}
-              </span>
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">{value.name}</span>
             )}
           </div>
         ) : (
-          <span>
-            {slim === false ? placeholder : <Globe size={20} />}
-          </span>
+          <span>{slim === false ? placeholder : <Globe size={20} />}</span>
         )}
         <ChevronDown size={16} />
       </PopoverTrigger>

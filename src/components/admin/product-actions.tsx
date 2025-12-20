@@ -31,14 +31,14 @@ export function ProductActions({ productId, productName }: ProductActionsProps) 
       const res = await fetch(`/api/admin/products/${productId}`, {
         method: 'DELETE',
       });
-      
+
       if (!res.ok) {
         throw new Error('Failed to delete product');
       }
-      
+
       router.refresh(); // Refresh the server component to update the list
       setShowDeleteModal(false);
-// inside handleDelete
+      // inside handleDelete
     } catch (error) {
       toast.error('Failed to delete product');
     } finally {
@@ -68,8 +68,8 @@ export function ProductActions({ productId, productName }: ProductActionsProps) 
           <DropdownMenuItem asChild>
             <Link href={`/admin/products/${productId}/edit`}>Edit</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={() => setShowDeleteModal(true)} 
+          <DropdownMenuItem
+            onClick={() => setShowDeleteModal(true)}
             className="text-red-600 focus:text-red-600"
           >
             Delete

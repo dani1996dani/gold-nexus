@@ -13,8 +13,8 @@ const getHandler: AdminApiHandler = async (req, context) => {
     }
     // Serialize decimal for client
     return NextResponse.json({
-        ...product,
-        price: product.price.toString(),
+      ...product,
+      price: product.price.toString(),
     });
   } catch (error) {
     console.error(`[API/ADMIN/PRODUCTS/[id]] Error fetching product:`, error);
@@ -45,23 +45,28 @@ const putHandler: AdminApiHandler = async (req, context) => {
 
     // If SKU is being updated, check if the new SKU is already taken by another product
     if (data.sku) {
-        const existingProduct = await prisma.product.findFirst({
-            where: { 
-                sku: data.sku,
-                id: { not: id }
-            },
-        });
-        if (existingProduct) {
-            return NextResponse.json({ message: 'Another product with this SKU already exists.' }, { status: 409 });
-        }
+      const existingProduct = await prisma.product.findFirst({
+        where: {
+          sku: data.sku,
+          id: { not: id },
+        },
+      });
+      if (existingProduct) {
+        return NextResponse.json(
+          { message: 'Another product with this SKU already exists.' },
+          { status: 409 }
+        );
+      }
     }
-    
+
     const updatedProduct = await updateProduct(id, data);
     return NextResponse.json(updatedProduct);
-
   } catch (error) {
     if (error instanceof z.ZodError) {
-        return NextResponse.json({ message: 'Invalid product data', errors: error.issues }, { status: 400 });
+      return NextResponse.json(
+        { message: 'Invalid product data', errors: error.issues },
+        { status: 400 }
+      );
     }
     console.error(`[API/ADMIN/PRODUCTS/[id]] Error updating product:`, error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

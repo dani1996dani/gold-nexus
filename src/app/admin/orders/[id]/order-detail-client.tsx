@@ -29,33 +29,33 @@ import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
 // This type should be defined based on what getOrderById returns
 // to avoid importing server-only types
 type OrderPayload = {
+  id: string;
+  displayId: number;
+  status: string;
+  totalAmount: string;
+  currency: string;
+  stripePaymentIntentId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  user: {
+    fullName: string;
+    email: string;
+  };
+  shippingAddressJson: any;
+  items: {
     id: string;
-    displayId: number;
-    status: string;
-    totalAmount: string;
-    currency: string;
-    stripePaymentIntentId: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-    user: {
-        fullName: string;
-        email: string;
+    quantity: number;
+    priceAtPurchase: string;
+    product: {
+      name: string;
+      sku: string;
     };
-    shippingAddressJson: any;
-    items: {
-        id: string;
-        quantity: number;
-        priceAtPurchase: string;
-        product: {
-            name: string;
-            sku: string;
-        };
-    }[];
+  }[];
 };
 
 interface OrderDetailClientProps {
-    order: OrderPayload;
-    statuses: string[];
+  order: OrderPayload;
+  statuses: string[];
 }
 
 export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
@@ -93,12 +93,13 @@ export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
         const body = await res.json();
         throw new Error(body.message || 'Failed to update status');
       }
-      
-      console.log(`[ACTION] Order status changed to ${selectedNewStatus}. Triggering email to customer.`);
-      
+
+      console.log(
+        `[ACTION] Order status changed to ${selectedNewStatus}. Triggering email to customer.`
+      );
+
       // Refresh the entire page to get the latest data from the server
       router.refresh();
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
@@ -107,30 +108,33 @@ export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
       setSelectedNewStatus(null);
     }
   };
-  
-    const handleCancelUpdate = () => {
-        setIsConfirmModalOpen(false);
-        setSelectedNewStatus(null);
-    };
+
+  const handleCancelUpdate = () => {
+    setIsConfirmModalOpen(false);
+    setSelectedNewStatus(null);
+  };
 
   return (
     <div className="space-y-6">
-        <ConfirmActionModal
-            isOpen={isConfirmModalOpen}
-            onClose={handleCancelUpdate}
-            onConfirm={handleConfirmUpdate}
-            title="Confirm Status Change"
-            message={
-            <>
-                Are you sure you want to change the order status to{' '}
-                <span className="font-bold">{selectedNewStatus ? formatStatus(selectedNewStatus) : 'N/A'}</span>?
-                <br />
-                This action will trigger an email notification to the customer.
-            </>
-            }
-            confirmText={isUpdatingStatus ? 'Updating...' : 'Confirm'}
-            isConfirming={isUpdatingStatus}
-        />
+      <ConfirmActionModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCancelUpdate}
+        onConfirm={handleConfirmUpdate}
+        title="Confirm Status Change"
+        message={
+          <>
+            Are you sure you want to change the order status to{' '}
+            <span className="font-bold">
+              {selectedNewStatus ? formatStatus(selectedNewStatus) : 'N/A'}
+            </span>
+            ?
+            <br />
+            This action will trigger an email notification to the customer.
+          </>
+        }
+        confirmText={isUpdatingStatus ? 'Updating...' : 'Confirm'}
+        isConfirming={isUpdatingStatus}
+      />
 
       <div>
         <Link href="/admin/orders">
@@ -148,7 +152,7 @@ export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
               <CardDescription>Details for order placed by {order.user.fullName}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-y-4 gap-x-4 text-sm sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-x-4 gap-y-4 text-sm sm:grid-cols-2">
                 <div className="space-y-2">
                   <p className="font-medium text-muted-foreground">Status</p>
                   <Select
@@ -173,9 +177,7 @@ export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
                 </div>
                 <div className="space-y-2">
                   <p className="font-medium text-muted-foreground">Total Amount</p>
-                  <p className="text-lg font-semibold">
-                    {formatCurrency(order.totalAmount)}
-                  </p>
+                  <p className="text-lg font-semibold">{formatCurrency(order.totalAmount)}</p>
                 </div>
                 <div className="space-y-2">
                   <p className="font-medium text-muted-foreground">Payment ID</p>
@@ -195,55 +197,57 @@ export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
         </div>
 
         <div className="space-y-6 lg:col-span-1">
-             <Card>
-                <CardHeader><CardTitle>Customer & Shipping</CardTitle></CardHeader>
-                <CardContent className="space-y-4 text-sm">
-                    <div className="space-y-1">
-                        <p className="font-medium text-muted-foreground">Customer</p>
-                        <p>{order.user.fullName}</p>
-                        <p className="text-muted-foreground">{order.user.email}</p>
-                    </div>
-                     <div className="space-y-1">
-                        <p className="font-medium text-muted-foreground">Shipping Address</p>
-                        <p>{shippingAddress.fullName}</p>
-                        <p>{`${shippingAddress.address || ''}${shippingAddress.apartment ? `, ${shippingAddress.apartment}` : ''}`}</p>
-                        <p>{`${shippingAddress.city || ''}, ${shippingAddress.state || ''} ${shippingAddress.postalCode || ''}`}</p>
-                        <p>{shippingAddress.country || ''}</p>
-                    </div>
-                </CardContent>
-             </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer & Shipping</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <div className="space-y-1">
+                <p className="font-medium text-muted-foreground">Customer</p>
+                <p>{order.user.fullName}</p>
+                <p className="text-muted-foreground">{order.user.email}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-muted-foreground">Shipping Address</p>
+                <p>{shippingAddress.fullName}</p>
+                <p>{`${shippingAddress.address || ''}${shippingAddress.apartment ? `, ${shippingAddress.apartment}` : ''}`}</p>
+                <p>{`${shippingAddress.city || ''}, ${shippingAddress.state || ''} ${shippingAddress.postalCode || ''}`}</p>
+                <p>{shippingAddress.country || ''}</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-      
+
       <Card>
         <CardHeader>
-            <CardTitle>Order Items</CardTitle>
+          <CardTitle>Order Items</CardTitle>
         </CardHeader>
         <CardContent>
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>SKU</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Product</TableHead>
+                <TableHead>SKU</TableHead>
+                <TableHead className="text-right">Quantity</TableHead>
+                <TableHead className="text-right">Price</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {order.items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.product.name}</TableCell>
+                  <TableCell>{item.product.sku}</TableCell>
+                  <TableCell className="text-right">{item.quantity}</TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(item.priceAtPurchase)}
+                  </TableCell>
                 </TableRow>
-                </TableHeader>
-                <TableBody>
-                {order.items.map((item) => (
-                    <TableRow key={item.id}>
-                    <TableCell>{item.product.name}</TableCell>
-                    <TableCell>{item.product.sku}</TableCell>
-                    <TableCell className="text-right">{item.quantity}</TableCell>
-                    <TableCell className="text-right">
-                        {formatCurrency(item.priceAtPurchase)}
-                    </TableCell>
-                    </TableRow>
-                ))}
-                </TableBody>
-            </Table>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
-        </Card>
+      </Card>
     </div>
   );
 }

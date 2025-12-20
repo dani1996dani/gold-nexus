@@ -74,18 +74,18 @@ export function createAndSetSession(user: Omit<User, 'password'>) {
 }
 
 export async function getUserIdFromToken(): Promise<string | null> {
-    const token = (await cookies()).get('accessToken')?.value;
-    if (!token) {
-        return null;
-    }
-    try {
-        const { publicKey } = getJwtKeys();
-        const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as { userId: string };
-        return decoded.userId ?? null;
-    } catch (error) {
-        // This will catch expired tokens or invalid signatures
-      // @ts-expect-error just an error bro
-        console.error('Failed to verify access token:', error.name);
-        return null;
-    }
+  const token = (await cookies()).get('accessToken')?.value;
+  if (!token) {
+    return null;
+  }
+  try {
+    const { publicKey } = getJwtKeys();
+    const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as { userId: string };
+    return decoded.userId ?? null;
+  } catch (error) {
+    // This will catch expired tokens or invalid signatures
+    // @ts-expect-error just an error bro
+    console.error('Failed to verify access token:', error.name);
+    return null;
+  }
 }

@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     }
 
     return createAndSetSession(user);
-
   } catch (error) {
     console.error('Login Error:', error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });

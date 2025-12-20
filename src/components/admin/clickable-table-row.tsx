@@ -26,7 +26,7 @@ export function ClickableTableRow({ href, children, className, ...props }: Click
     }
 
     if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
-        router.push(href);
+      router.push(href);
     }
   };
 

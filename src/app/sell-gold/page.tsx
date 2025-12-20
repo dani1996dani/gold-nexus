@@ -28,7 +28,7 @@ export default function SellGoldPage() {
     status: 'idle' | 'submitting' | 'success' | 'error';
     message: string | null;
   }>({ status: 'idle', message: null });
-  
+
   const [karats, setKarats] = useState<Karat[]>([]);
   const uploadFilesRef = useRef<File[]>([]);
 
@@ -68,7 +68,7 @@ export default function SellGoldPage() {
 
   const onSubmit = async (data: LeadFormValues) => {
     const files = uploadFilesRef.current;
-    
+
     setSubmissionState({ status: 'submitting', message: 'Uploading images...' });
 
     try {
@@ -100,13 +100,13 @@ export default function SellGoldPage() {
         const data = await uploadRes.json();
         photoUrls.push(data.url);
       }
-      
+
       setSubmissionState({ status: 'submitting', message: 'Submitting inquiry...' });
 
       // The 'data' from onSubmit doesn't include the real URLs, so we build the final payload.
-      const submissionData = { 
-        ...data, 
-        photoUrls: photoUrls // Override with the real URLs
+      const submissionData = {
+        ...data,
+        photoUrls: photoUrls, // Override with the real URLs
       };
 
       const response = await fetch('/api/leads', {
@@ -124,9 +124,10 @@ export default function SellGoldPage() {
         status: 'success',
         message: 'Your inquiry has been submitted successfully! We will contact you shortly.',
       });
-// inside onSubmit
+      // inside onSubmit
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+      const message =
+        error instanceof Error ? error.message : 'Something went wrong. Please try again.';
       setSubmissionState({ status: 'error', message });
       toast.error(message);
     }
@@ -138,7 +139,9 @@ export default function SellGoldPage() {
         <CheckCircle className="h-16 w-16 text-green-500" />
         <h1 className="mt-4 font-serif text-3xl font-medium">Thank You!</h1>
         <p className="mt-2 max-w-md text-neutral-600">{submissionState.message}</p>
-        <Button onClick={() => window.location.reload()} className="mt-6">Submit Another Inquiry</Button>
+        <Button onClick={() => window.location.reload()} className="mt-6">
+          Submit Another Inquiry
+        </Button>
       </div>
     );
   }
@@ -163,18 +166,38 @@ export default function SellGoldPage() {
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="fullName">Full Name</Label>
-                  <Controller name="fullName" control={control} render={({ field }) => <Input id="fullName" {...field} className="mt-1.5" />} />
-                  {errors.fullName && <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>}
+                  <Controller
+                    name="fullName"
+                    control={control}
+                    render={({ field }) => <Input id="fullName" {...field} className="mt-1.5" />}
+                  />
+                  {errors.fullName && (
+                    <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="email">Email Address</Label>
-                  <Controller name="email" control={control} render={({ field }) => <Input id="email" type="email" {...field} className="mt-1.5" />} />
-                  {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                      <Input id="email" type="email" {...field} className="mt-1.5" />
+                    )}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="phoneNumber">Phone Number</Label>
-                  <Controller name="phoneNumber" control={control} render={({ field }) => <Input id="phoneNumber" {...field} className="mt-1.5" />} />
-                  {errors.phoneNumber && <p className="mt-1 text-xs text-red-500">{errors.phoneNumber.message}</p>}
+                  <Controller
+                    name="phoneNumber"
+                    control={control}
+                    render={({ field }) => <Input id="phoneNumber" {...field} className="mt-1.5" />}
+                  />
+                  {errors.phoneNumber && (
+                    <p className="mt-1 text-xs text-red-500">{errors.phoneNumber.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="country">Country</Label>
@@ -184,19 +207,25 @@ export default function SellGoldPage() {
                     render={({ field }) => (
                       <div className="mt-1.5">
                         <CountryDropdown
-                          value={countries.all.find(c => c.name === field.value)}
+                          value={countries.all.find((c) => c.name === field.value)}
                           onChange={(country: Country) => field.onChange(country.name)}
                         />
                       </div>
                     )}
                   />
-                  {errors.country && <p className="mt-1 text-xs text-red-500">{errors.country.message}</p>}
+                  {errors.country && (
+                    <p className="mt-1 text-xs text-red-500">{errors.country.message}</p>
+                  )}
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="city">City</Label>
-                <Controller name="city" control={control} render={({ field }) => <Input id="city" {...field} className="mt-1.5" />} />
+                <Controller
+                  name="city"
+                  control={control}
+                  render={({ field }) => <Input id="city" {...field} className="mt-1.5" />}
+                />
                 {errors.city && <p className="mt-1 text-xs text-red-500">{errors.city.message}</p>}
               </div>
 
@@ -208,7 +237,9 @@ export default function SellGoldPage() {
                     control={control}
                     render={({ field }) => (
                       <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select item type" /></SelectTrigger>
+                        <SelectTrigger className="mt-1.5">
+                          <SelectValue placeholder="Select item type" />
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Gold Bar">Gold Bar</SelectItem>
                           <SelectItem value="Gold Coin">Gold Coin</SelectItem>
@@ -218,34 +249,61 @@ export default function SellGoldPage() {
                       </Select>
                     )}
                   />
-                  {errors.itemType && <p className="mt-1 text-xs text-red-500">{errors.itemType.message}</p>}
+                  {errors.itemType && (
+                    <p className="mt-1 text-xs text-red-500">{errors.itemType.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="estimatedKarat">Estimated Karat</Label>
-                   <Controller
+                  <Controller
                     name="estimatedKarat"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value} disabled={karats.length === 0}>
-                        <SelectTrigger className="mt-1.5"><SelectValue placeholder={karats.length > 0 ? "Select karat" : "Loading..."} /></SelectTrigger>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={karats.length === 0}
+                      >
+                        <SelectTrigger className="mt-1.5">
+                          <SelectValue
+                            placeholder={karats.length > 0 ? 'Select karat' : 'Loading...'}
+                          />
+                        </SelectTrigger>
                         <SelectContent>
-                          {karats.map(k => (
-                            <SelectItem key={k.id} value={k.name}>{k.name}</SelectItem>
+                          {karats.map((k) => (
+                            <SelectItem key={k.id} value={k.name}>
+                              {k.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                   />
-                  {errors.estimatedKarat && <p className="mt-1 text-xs text-red-500">{errors.estimatedKarat.message}</p>}
+                  {errors.estimatedKarat && (
+                    <p className="mt-1 text-xs text-red-500">{errors.estimatedKarat.message}</p>
+                  )}
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="estimatedWeight">Estimated Weight (in grams)</Label>
-                <Controller name="estimatedWeight" control={control} render={({ field }) => <Input id="estimatedWeight" placeholder="e.g., 100" {...field} className="mt-1.5" />} />
-                {errors.estimatedWeight && <p className="mt-1 text-xs text-red-500">{errors.estimatedWeight.message}</p>}
+                <Controller
+                  name="estimatedWeight"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="estimatedWeight"
+                      placeholder="e.g., 100"
+                      {...field}
+                      className="mt-1.5"
+                    />
+                  )}
+                />
+                {errors.estimatedWeight && (
+                  <p className="mt-1 text-xs text-red-500">{errors.estimatedWeight.message}</p>
+                )}
               </div>
-              
+
               <div>
                 <Label>Photo Upload</Label>
                 <Controller
@@ -258,14 +316,16 @@ export default function SellGoldPage() {
                           // Update the ref for the actual upload process
                           uploadFilesRef.current = files;
                           // Update the form field with dummy data (file names) for validation
-                          field.onChange(files.map(file => file.name));
+                          field.onChange(files.map((file) => file.name));
                         }}
                         maxFiles={10}
                       />
                     </div>
                   )}
                 />
-                {errors.photoUrls && <p className="mt-1 text-xs text-red-500">{errors.photoUrls.message}</p>}
+                {errors.photoUrls && (
+                  <p className="mt-1 text-xs text-red-500">{errors.photoUrls.message}</p>
+                )}
               </div>
 
               {submissionState.status === 'error' && (
@@ -281,7 +341,9 @@ export default function SellGoldPage() {
                   disabled={submissionState.status === 'submitting'}
                   className="w-full rounded-md bg-black py-6 text-base font-semibold text-white hover:bg-neutral-800"
                 >
-                  {submissionState.status === 'submitting' ? submissionState.message : 'Submit Inquiry'}
+                  {submissionState.status === 'submitting'
+                    ? submissionState.message
+                    : 'Submit Inquiry'}
                 </Button>
               </div>
             </form>

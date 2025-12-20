@@ -67,7 +67,6 @@ export async function getLiveGoldPrice() {
     throw new Error('Failed to fetch gold price and no cached data available.');
   }
 
-  
   // If there's no existing price, we set previous to the new price to avoid a 0 delta.
   const previousPrice = existingPrice ? existingPrice.currentPrice : newExternalPrice;
 

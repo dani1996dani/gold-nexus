@@ -6,9 +6,9 @@ import { prisma } from '@/lib/db';
  * by both Server Components and API Routes.
  */
 export async function getLeads(
-  page: number, 
-  limit: number, 
-  sortBy: string = 'createdAt', 
+  page: number,
+  limit: number,
+  sortBy: string = 'createdAt',
   sortOrder: 'asc' | 'desc' = 'desc'
 ) {
   const skip = (page - 1) * limit;
@@ -27,15 +27,15 @@ export async function getLeads(
   const totalPages = Math.ceil(total / limit);
 
   // Safely parse photoUrls for each lead and serialize Decimal
-  const leadsWithParsedPhotos = leads.map(lead => {
+  const leadsWithParsedPhotos = leads.map((lead) => {
     const photoUrls: string[] =
       lead.photoUrls && Array.isArray(lead.photoUrls)
         ? lead.photoUrls.filter((item): item is string => typeof item === 'string')
         : [];
-    return { 
-      ...lead, 
+    return {
+      ...lead,
       photoUrls,
-      estimatedValue: lead.estimatedValue ? lead.estimatedValue.toString() : null
+      estimatedValue: lead.estimatedValue ? lead.estimatedValue.toString() : null,
     };
   });
 
@@ -68,9 +68,9 @@ export async function getLeadById(id: string) {
       ? lead.photoUrls.filter((item): item is string => typeof item === 'string')
       : [];
 
-  return { 
-    ...lead, 
+  return {
+    ...lead,
     photoUrls,
-    estimatedValue: lead.estimatedValue ? lead.estimatedValue.toString() : null 
+    estimatedValue: lead.estimatedValue ? lead.estimatedValue.toString() : null,
   };
 }

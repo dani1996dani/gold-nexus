@@ -40,7 +40,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <h3 className="mb-4 font-serif text-lg font-medium text-foreground">{name}</h3>
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-[10px] font-medium uppercase text-muted-foreground">Live Ask</span>
+            <span className="text-[10px] font-medium uppercase text-muted-foreground">
+              Live Ask
+            </span>
             <span className="font-sans text-xl font-bold text-foreground">
               {formatCurrency(Number(price))}
             </span>

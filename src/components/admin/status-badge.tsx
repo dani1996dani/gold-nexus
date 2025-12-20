@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { formatStatus } from "@/lib/utils";
+import { Badge } from '@/components/ui/badge';
+import { formatStatus } from '@/lib/utils';
 
 interface StatusBadgeProps {
   status: string;

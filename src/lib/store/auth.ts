@@ -37,7 +37,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           }
         }
       }
-       
+
       set({ isLoggedIn: false, user: null });
     } catch (error) {
       console.error('Auth check failed', error);
@@ -49,4 +49,3 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: (user: Omit<User, 'password'>) => set({ isLoggedIn: true, user: user }),
   logout: () => set({ isLoggedIn: false, user: null }),
 }));
-

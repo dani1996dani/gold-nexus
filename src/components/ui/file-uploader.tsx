@@ -21,13 +21,13 @@ export const FileUploader = ({ onFilesChange, maxFiles = 10 }: FileUploaderProps
         if (rejectionError.code === 'file-too-large') {
           setError('File is too large. Maximum size is 10MB.');
         } else if (rejectionError.code === 'too-many-files') {
-           setError(`You can only upload a maximum of ${maxFiles} files.`);
+          setError(`You can only upload a maximum of ${maxFiles} files.`);
         } else {
-           setError(rejectionError.message);
+          setError(rejectionError.message);
         }
         return;
       }
-      
+
       if (files.length + acceptedFiles.length > maxFiles) {
         setError(`You can only upload a maximum of ${maxFiles} files.`);
         return;
@@ -39,23 +39,23 @@ export const FileUploader = ({ onFilesChange, maxFiles = 10 }: FileUploaderProps
     },
     [files, maxFiles, onFilesChange]
   );
-  
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { 'image/*': ['.jpeg', '.png', '.jpg'] },
     maxSize: 10 * 1024 * 1024, // 10MB
     maxFiles: maxFiles,
   });
-  
+
   const removeFile = (fileToRemove: File) => {
-    const newFiles = files.filter(file => file !== fileToRemove);
+    const newFiles = files.filter((file) => file !== fileToRemove);
     setFiles(newFiles);
     onFilesChange(newFiles);
   };
-  
+
   useEffect(() => {
     // Cleanup object URLs on unmount
-    return () => files.forEach(file => URL.revokeObjectURL(URL.createObjectURL(file)));
+    return () => files.forEach((file) => URL.revokeObjectURL(URL.createObjectURL(file)));
   }, [files]);
 
   return (
@@ -75,7 +75,7 @@ export const FileUploader = ({ onFilesChange, maxFiles = 10 }: FileUploaderProps
           <p className="text-xs text-neutral-500">PNG or JPG (max 10MB. Up to {maxFiles} files)</p>
         </div>
       </div>
-      
+
       {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
 
       {files.length > 0 && (

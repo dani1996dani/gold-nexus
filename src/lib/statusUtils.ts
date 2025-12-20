@@ -1,7 +1,14 @@
 import { OrderStatus } from '@/generated/prisma/client';
 
 // Define a type for the possible Badge variants from your component
-type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline' | 'processing' | 'shipped' | 'delivered';
+type BadgeVariant =
+  | 'default'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'processing'
+  | 'shipped'
+  | 'delivered';
 
 export const getOrderStatusVariant = (status: OrderStatus): BadgeVariant => {
   switch (status) {

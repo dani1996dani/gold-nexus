@@ -7,14 +7,14 @@ import { NextRequest } from 'next/server';
 
 /**
  * A centralized function to get the authenticated admin user from the request cookie.
- * This can be used by both Server Components (which don't have a request object) 
+ * This can be used by both Server Components (which don't have a request object)
  * and API routes (which do).
  * @param req Optional NextRequest object from an API route.
  * @param options Configuration options.
  * @returns The admin user object (without password) or null if not authenticated or not an admin.
  */
 export async function getAuthenticatedAdmin(
-  req?: NextRequest, 
+  req?: NextRequest,
   options: { allowRefresh?: boolean } = { allowRefresh: false }
 ): Promise<Omit<User, 'password'> | null> {
   let accessToken: string | undefined;
@@ -35,7 +35,10 @@ export async function getAuthenticatedAdmin(
   // 1. Try Access Token
   if (accessToken) {
     try {
-      const decoded = jwt.verify(accessToken, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
+      const decoded = jwt.verify(accessToken, publicKey, { algorithms: ['RS256'] }) as {
+        userId: string;
+        role: Role;
+      };
       if (decoded.role === Role.ADMIN) {
         return await fetchAdminUser(decoded.userId);
       }
@@ -47,7 +50,10 @@ export async function getAuthenticatedAdmin(
   // 2. Try Refresh Token (Fallback)
   if (options.allowRefresh && refreshToken) {
     try {
-      const decoded = jwt.verify(refreshToken, publicKey, { algorithms: ['RS256'] }) as { userId: string; role: Role };
+      const decoded = jwt.verify(refreshToken, publicKey, { algorithms: ['RS256'] }) as {
+        userId: string;
+        role: Role;
+      };
       if (decoded.role === Role.ADMIN) {
         return await fetchAdminUser(decoded.userId);
       }
@@ -64,11 +70,11 @@ async function fetchAdminUser(userId: string) {
     const admin = await prisma.user.findUnique({
       where: { id: userId, role: Role.ADMIN },
     });
-    
+
     if (!admin) {
-        return null;
+      return null;
     }
-    
+
     const { password, ...adminWithoutPassword } = admin;
     return adminWithoutPassword;
   } catch (error) {

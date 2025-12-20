@@ -15,10 +15,7 @@ export async function GET() {
     });
 
     if (!goldPriceData) {
-      return NextResponse.json(
-        { message: 'Gold price data not available.' },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'Gold price data not available.' }, { status: 404 });
     }
 
     // The Prisma Decimal type is not directly serializable, so we convert to string.
@@ -32,9 +29,6 @@ export async function GET() {
     return NextResponse.json(serializableData);
   } catch (error) {
     console.error('[API/GOLD-PRICE] Error fetching gold price from DB:', error);
-    return NextResponse.json(
-      { message: 'Failed to fetch gold price data.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Failed to fetch gold price data.' }, { status: 500 });
   }
 }

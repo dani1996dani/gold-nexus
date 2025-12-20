@@ -51,8 +51,8 @@ export default function MyAccountPage() {
     ? countries.all.find((c) => c.name === user.country)
     : undefined;
 
-  if(loading){
-    return <ProfilePageLoading/>;
+  if (loading) {
+    return <ProfilePageLoading />;
   }
 
   if (error) {
@@ -140,13 +140,13 @@ export default function MyAccountPage() {
                   <TableBody>
                     {user.orders.map((order: OrderWithItems) => (
                       <TableRow key={order.id} className="border-neutral-200">
-                        <TableCell className="font-medium">
-                          #{order.displayId}
-                        </TableCell>
+                        <TableCell className="font-medium">#{order.displayId}</TableCell>
                         <TableCell className="text-neutral-600">
                           {formatDate(order.createdAt)}
                         </TableCell>
-                        <TableCell className="font-bold">{formatCurrency(Number(order.totalAmount))}</TableCell>
+                        <TableCell className="font-bold">
+                          {formatCurrency(Number(order.totalAmount))}
+                        </TableCell>
                         <TableCell>
                           <Badge variant={getOrderStatusVariant(order.status)}>
                             {order.status}

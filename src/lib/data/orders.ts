@@ -7,7 +7,7 @@ import { prisma } from '@/lib/db';
  * @returns An object containing paginated order data.
  */
 export async function getOrders(
-  page: number, 
+  page: number,
   limit: number,
   sortBy: string = 'createdAt',
   sortOrder: 'asc' | 'desc' = 'desc'
@@ -16,7 +16,7 @@ export async function getOrders(
 
   // Define allowed sort keys to prevent 'any' usage
   const allowedSortKeys = ['totalAmount', 'displayId', 'status', 'createdAt'] as const;
-  type AllowedSortKey = typeof allowedSortKeys[number];
+  type AllowedSortKey = (typeof allowedSortKeys)[number];
 
   let orderBy: Record<string, any> = {};
 

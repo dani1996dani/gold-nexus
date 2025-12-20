@@ -6,7 +6,10 @@ export async function POST(req: NextRequest) {
   try {
     // --- Robustness check: Ensure supabase client is initialized ---
     if (!supabase) {
-        return NextResponse.json({ message: 'Supabase client is not configured on the server.' }, { status: 500 });
+      return NextResponse.json(
+        { message: 'Supabase client is not configured on the server.' },
+        { status: 500 }
+      );
     }
 
     const formData = await req.formData();
@@ -18,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     // --- Validate File ---
     if (file.size === 0) {
-        return NextResponse.json({ message: 'File is empty' }, { status: 400 });
+      return NextResponse.json({ message: 'File is empty' }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -39,9 +42,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: `Storage error: ${error.message}` }, { status: 500 });
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('gold-nexus-leads')
-      .getPublicUrl(data.path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('gold-nexus-leads').getPublicUrl(data.path);
 
     return NextResponse.json({ url: publicUrl });
   } catch (error) {

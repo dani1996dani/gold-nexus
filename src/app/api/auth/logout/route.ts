@@ -25,7 +25,6 @@ export async function POST() {
     });
 
     return response;
-
   } catch (error) {
     console.error('Logout Error:', error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });

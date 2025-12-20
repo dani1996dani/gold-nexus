@@ -111,11 +111,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <dl className="mt-4 text-sm">
                   <div className="flex justify-between py-2">
                     <dt>Gross Weight</dt>
-                    <dd>{product.weight || "-"}</dd>
+                    <dd>{product.weight || '-'}</dd>
                   </div>
                   <div className="flex justify-between py-2">
                     <dt>Fineness</dt>
-                    <dd>{product.karat || "-"}</dd>
+                    <dd>{product.karat || '-'}</dd>
                   </div>
                   {/* Removed the 'Dimensions' row */}
                 </dl>

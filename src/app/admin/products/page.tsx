@@ -138,7 +138,7 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
         <div className="flex-1 text-sm text-muted-foreground">
           Page {page} of {totalPages}
         </div>
-        <div className="space-x-2 flex flex-row justify-center items-center">
+        <div className="flex flex-row items-center justify-center space-x-2">
           <Button variant="outline" size="sm" disabled={page <= 1} asChild>
             <Link
               href={

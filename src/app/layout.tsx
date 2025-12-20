@@ -49,7 +49,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
-            <Toaster position='top-right' richColors theme='light'/>
+            <Toaster position="top-right" richColors theme="light" />
           </NuqsAdapter>
         </AuthProvider>
       </body>

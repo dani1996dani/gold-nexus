@@ -30,9 +30,6 @@ export async function POST() {
     });
   } catch (error) {
     console.error('[CRON] Error updating gold price:', error);
-    return NextResponse.json(
-      { message: 'Failed to update gold price data.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Failed to update gold price data.' }, { status: 500 });
   }
 }

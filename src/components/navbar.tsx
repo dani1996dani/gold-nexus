@@ -170,4 +170,4 @@ export function Navbar() {
       </nav>
     </div>
   );
-};
+}

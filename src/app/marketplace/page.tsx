@@ -54,7 +54,7 @@ export default function MarketplacePage() {
   // Sync URL query state with temp state for the filter sidebar
   useEffect(() => {
     const validCategories = query.categories.filter((cat): cat is ProductCategory =>
-      CATEGORIES.some(c => c.value === cat)
+      CATEGORIES.some((c) => c.value === cat)
     );
     setTempCategories(validCategories);
   }, [query.categories]);
@@ -67,7 +67,6 @@ export default function MarketplacePage() {
       products = products.filter((p) => query.categories.includes(p.category));
     }
     products.sort((a, b) => {
-
       const priceA = a.price as unknown as number;
       const priceB = b.price as unknown as number;
       if (query.sortBy === 'price-desc') return priceB - priceA;

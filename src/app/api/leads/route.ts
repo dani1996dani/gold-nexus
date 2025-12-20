@@ -13,7 +13,7 @@ async function getKaratPurities(): Promise<Record<string, number>> {
     console.log('No karat cache found. Fetching from DB...');
     karatCache = await prisma.karat.findMany();
   }
-  
+
   return karatCache.reduce((acc: Record<string, number>, karat) => {
     acc[karat.name.toUpperCase()] = Number(karat.purity);
     return acc;
@@ -69,7 +69,10 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json({ message: 'Invalid form data', errors: error.issues }, { status: 400 });
+      return NextResponse.json(
+        { message: 'Invalid form data', errors: error.issues },
+        { status: 400 }
+      );
     }
     console.error('[API/LEADS] Error creating lead:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

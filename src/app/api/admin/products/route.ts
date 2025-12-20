@@ -15,16 +15,16 @@ const getProductsHandler: AdminApiHandler = async (req) => {
     const sortOrder = sortOrderParam === 'asc' ? 'asc' : 'desc';
 
     const productsResult = await getProducts(page, limit, search, sortBy, sortOrder);
-    
+
     // Serialize Decimal types for the client
-    const serializedData = productsResult.data.map(product => ({
+    const serializedData = productsResult.data.map((product) => ({
       ...product,
       price: product.price.toString(),
     }));
 
     return NextResponse.json({
-        data: serializedData,
-        pagination: productsResult.pagination,
+      data: serializedData,
+      pagination: productsResult.pagination,
     });
   } catch (error) {
     console.error('[API/ADMIN/PRODUCTS] Error fetching products:', error);
@@ -47,33 +47,38 @@ const productSchema = z.object({
 });
 
 const postProductsHandler: AdminApiHandler = async (req) => {
-    try {
-        const body = await req.json();
-        const data = productSchema.parse(body);
+  try {
+    const body = await req.json();
+    const data = productSchema.parse(body);
 
-        // Check for duplicate SKU
-        const existingProduct = await prisma.product.findUnique({
-            where: { sku: data.sku },
-        });
+    // Check for duplicate SKU
+    const existingProduct = await prisma.product.findUnique({
+      where: { sku: data.sku },
+    });
 
-        if (existingProduct) {
-            return NextResponse.json({ message: 'A product with this SKU already exists.' }, { status: 409 });
-        }
-
-        const newProduct = await prisma.product.create({
-            data,
-        });
-
-        return NextResponse.json(newProduct, { status: 201 });
-    } catch (error) {
-        if (error instanceof z.ZodError) {
-            return NextResponse.json({ message: 'Invalid product data', errors: error.issues }, { status: 400 });
-        }
-        console.error('[API/ADMIN/PRODUCTS] Error creating product:', error);
-        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    if (existingProduct) {
+      return NextResponse.json(
+        { message: 'A product with this SKU already exists.' },
+        { status: 409 }
+      );
     }
-};
 
+    const newProduct = await prisma.product.create({
+      data,
+    });
+
+    return NextResponse.json(newProduct, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { message: 'Invalid product data', errors: error.issues },
+        { status: 400 }
+      );
+    }
+    console.error('[API/ADMIN/PRODUCTS] Error creating product:', error);
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
+};
 
 export const GET = withAdminAuth(getProductsHandler);
 export const POST = withAdminAuth(postProductsHandler);

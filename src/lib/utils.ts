@@ -39,4 +39,3 @@ export function formatPriceNumber(value: number | string): string {
     maximumFractionDigits: 2,
   }).format(num);
 }
-

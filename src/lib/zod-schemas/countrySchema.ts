@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const countrySchema = z.object({
   alpha2: z.string(),

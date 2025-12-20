@@ -29,7 +29,7 @@ export const GoldTicker = () => {
 
     fetchGoldPrice();
     // Re-fetch every 60 seconds to keep the ticker fresh
-    const interval = setInterval(fetchGoldPrice, 60000); 
+    const interval = setInterval(fetchGoldPrice, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -62,7 +62,11 @@ export const GoldTicker = () => {
       <div className="flex items-center gap-2">
         <span className="font-medium text-[#1a202c]">Gold</span>
         <span className="font-semibold text-[#1a202c]">
-          ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(current)}
+          $
+          {new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(current)}
         </span>
         <Icon className={`h-4 w-4 ${color}`} />
         <span className={`font-medium ${color}`}>{percentageChange.toFixed(2)}%</span>
@@ -73,9 +77,7 @@ export const GoldTicker = () => {
   return (
     <div className="border-b border-gray-200 bg-[#F9FAFB] py-2">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center gap-8 text-sm">
-          {renderContent()}
-        </div>
+        <div className="flex items-center justify-center gap-8 text-sm">{renderContent()}</div>
       </div>
     </div>
   );

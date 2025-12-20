@@ -39,88 +39,98 @@ export default async function AdminOrdersPage({ searchParams }: OrdersPageProps)
 
   return (
     <div className="space-y-6">
-       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-           <h1 className="text-2xl font-semibold">Orders</h1>
-           <p className="text-sm text-muted-foreground">Review and manage all customer orders.</p>
+          <h1 className="text-2xl font-semibold">Orders</h1>
+          <p className="text-sm text-muted-foreground">Review and manage all customer orders.</p>
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="overflow-hidden p-0">
         <CardContent className="p-0">
-            <Table>
+          <Table>
             <TableHeader>
-                <TableRow>
+              <TableRow>
                 <TableHead>
-                    <SortableColumn column="displayId" label="Order ID" />
+                  <SortableColumn column="displayId" label="Order ID" />
                 </TableHead>
                 <TableHead>
-                    <SortableColumn column="customer" label="Customer" />
+                  <SortableColumn column="customer" label="Customer" />
                 </TableHead>
                 <TableHead>
-                    <SortableColumn column="totalAmount" label="Total" />
+                  <SortableColumn column="totalAmount" label="Total" />
                 </TableHead>
                 <TableHead>
-                    <SortableColumn column="status" label="Status" />
+                  <SortableColumn column="status" label="Status" />
                 </TableHead>
                 <TableHead>
-                     <SortableColumn column="createdAt" label="Date" />
+                  <SortableColumn column="createdAt" label="Date" />
                 </TableHead>
                 <TableHead>
-                    <span className="sr-only">Actions</span>
+                  <span className="sr-only">Actions</span>
                 </TableHead>
-                </TableRow>
+              </TableRow>
             </TableHeader>
             <TableBody>
-                {orders.map((order) => (
+              {orders.map((order) => (
                 <ClickableTableRow key={order.id} href={`/admin/orders/${order.id}`}>
-                    <TableCell className="font-medium">#{order.displayId}</TableCell>
-                    <TableCell>{order.user.fullName}</TableCell>
-                    <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
-                    <TableCell>
+                  <TableCell className="font-medium">#{order.displayId}</TableCell>
+                  <TableCell>{order.user.fullName}</TableCell>
+                  <TableCell>{formatCurrency(order.totalAmount)}</TableCell>
+                  <TableCell>
                     <StatusBadge status={order.status} />
-                    </TableCell>
-                    <TableCell>{formatDate(order.createdAt)}</TableCell>
-                    <TableCell className="text-right">
+                  </TableCell>
+                  <TableCell>{formatDate(order.createdAt)}</TableCell>
+                  <TableCell className="text-right">
                     <Link href={`/admin/orders/${order.id}`}>
-                        <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm">
                         View <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
+                      </Button>
                     </Link>
-                    </TableCell>
+                  </TableCell>
                 </ClickableTableRow>
-                ))}
+              ))}
             </TableBody>
-            </Table>
-            
-            {orders.length === 0 && (
-                <div className="text-center p-8 text-muted-foreground">
-                    No orders found.
-                </div>
-            )}
+          </Table>
+
+          {orders.length === 0 && (
+            <div className="p-8 text-center text-muted-foreground">No orders found.</div>
+          )}
         </CardContent>
       </Card>
 
-        {/* Pagination Controls */}
-        <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="flex-1 text-sm text-muted-foreground">
-                Page {page} of {totalPages}
-            </div>
-            <div className="space-x-2 flex flex-row justify-center items-center">
-                <Button variant="outline" size="sm" disabled={page <= 1} asChild>
-                    <Link href={page > 1 ? `/admin/orders?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
-                        <ChevronLeft className="h-4 w-4" />
-                        Previous
-                    </Link>
-                </Button>
-                <Button variant="outline" size="sm" disabled={page >= totalPages} asChild>
-                    <Link href={page < totalPages ? `/admin/orders?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}` : '#'}>
-                        Next
-                        <ChevronRight className="h-4 w-4" />
-                    </Link>
-                </Button>
-            </div>
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          Page {page} of {totalPages}
         </div>
+        <div className="flex flex-row items-center justify-center space-x-2">
+          <Button variant="outline" size="sm" disabled={page <= 1} asChild>
+            <Link
+              href={
+                page > 1
+                  ? `/admin/orders?page=${page - 1}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+                  : '#'
+              }
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" disabled={page >= totalPages} asChild>
+            <Link
+              href={
+                page < totalPages
+                  ? `/admin/orders?page=${page + 1}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+                  : '#'
+              }
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

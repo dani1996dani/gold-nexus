@@ -1,9 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -12,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
 
 export default function ProfilePageLoading() {
   return (
@@ -56,29 +51,45 @@ export default function ProfilePageLoading() {
         <div className="mt-10">
           <Card className="border-neutral-200 bg-white shadow-none">
             <CardHeader>
-                <Skeleton className="h-7 w-1/4" />
+              <Skeleton className="h-7 w-1/4" />
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow className="hover:bg-transparent">
-                            <TableHead><Skeleton className="h-5 w-1/2" /></TableHead>
-                            <TableHead><Skeleton className="h-5 w-1/2" /></TableHead>
-                            <TableHead><Skeleton className="h-5 w-1/2" /></TableHead>
-                            <TableHead><Skeleton className="h-5 w-1/2" /></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {Array.from({length: 3}).map((_, i) => (
-                            <TableRow key={i} className="border-neutral-200">
-                                <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
-                                <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
-                                <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
-                                <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>
+                      <Skeleton className="h-5 w-1/2" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-5 w-1/2" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-5 w-1/2" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-5 w-1/2" />
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <TableRow key={i} className="border-neutral-200">
+                      <TableCell>
+                        <Skeleton className="h-5 w-3/4" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-5 w-3/4" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-5 w-3/4" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-5 w-3/4" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

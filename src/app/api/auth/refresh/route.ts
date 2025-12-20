@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
     let decoded;
     try {
       // 1. Verify the refresh token is valid and not expired
-      decoded = jwt.verify(refreshToken, publicKey, { algorithms: ['RS256'] }) as { userId: string, role: string };
+      decoded = jwt.verify(refreshToken, publicKey, { algorithms: ['RS256'] }) as {
+        userId: string;
+        role: string;
+      };
     } catch (err) {
       // If verification fails, the token is invalid or expired
       return NextResponse.json({ error: 'Invalid or expired refresh token' }, { status: 401 });
@@ -32,7 +35,10 @@ export async function POST(request: NextRequest) {
     );
 
     // 3. Send the new access token back
-    const response = NextResponse.json({ message: 'Token refreshed successfully' }, { status: 200 });
+    const response = NextResponse.json(
+      { message: 'Token refreshed successfully' },
+      { status: 200 }
+    );
     response.cookies.set('accessToken', newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -42,7 +48,6 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-
   } catch (error) {
     console.error('Refresh Token Error:', error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });

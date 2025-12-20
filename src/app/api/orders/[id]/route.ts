@@ -39,13 +39,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // Serialize Decimal
     const serializedOrder = {
-        ...order,
-        totalAmount: order.totalAmount.toString(),
-        items: order.items.map(item => ({
-            ...item,
-            priceAtPurchase: item.priceAtPurchase.toString()
-        }))
-    }
+      ...order,
+      totalAmount: order.totalAmount.toString(),
+      items: order.items.map((item) => ({
+        ...item,
+        priceAtPurchase: item.priceAtPurchase.toString(),
+      })),
+    };
 
     return NextResponse.json(serializedOrder);
   } catch (error) {

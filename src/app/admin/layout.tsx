@@ -32,12 +32,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           {/* We can add a mobile nav toggle and user dropdown here later */}
           <div className="w-full flex-1">
-             <h1 className="text-lg font-semibold">Dashboard</h1>
+            <h1 className="text-lg font-semibold">Dashboard</h1>
           </div>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          {children}
-        </main>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">{children}</main>
       </div>
     </div>
   );

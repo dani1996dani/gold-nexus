@@ -48,7 +48,7 @@ export default function LoginPage() {
 
       if (res.ok) {
         // Pass the user object to login
-        login(responseData.user); 
+        login(responseData.user);
         router.push('/profile');
       } else {
         setError('root', {
