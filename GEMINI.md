@@ -91,6 +91,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
     - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
 - `[ ]` add pagination (infi scroll) in live market (probably needs some BE work as well)
 - `[ ]` **create a custom 404 page?**
+- `[ ]` **admin panel is seen on mobile in navbar but im fully locked out on mobile?? no matter how much i refresh??**
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
 - `[ ]` **STATUS: PENDING**
