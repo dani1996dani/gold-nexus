@@ -96,7 +96,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
   - `[x]` Country dropdown validation text in checkout is horrible, need custom text. (maybe needed in all places with country dropdown)
 - `[ ]` **Editable User Profile:**
   - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
-- `[ ]` add pagination (infi scroll) in live market (probably needs some BE work as well)
+- `[x]` add pagination (infi scroll) in live market (probably needs some BE work as well)
 - `[ ]` **create a custom 404 page?**
 - `[ ]` **admin panel is seen on mobile in navbar but im fully locked out on mobile?? no matter how much i refresh??**
 - `[x]` **fix gold price. it barely updates. maybe set up a cron job on cron-job.org?**
