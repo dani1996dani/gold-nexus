@@ -21,6 +21,8 @@ import { countries } from 'country-data-list';
 import { FileUploader } from '@/components/ui/file-uploader';
 import { Karat } from '@/generated/prisma/client';
 
+import { toast } from 'sonner';
+
 export default function SellGoldPage() {
   const [submissionState, setSubmissionState] = useState<{
     status: 'idle' | 'submitting' | 'success' | 'error';
@@ -39,6 +41,7 @@ export default function SellGoldPage() {
         setKarats(data);
       } catch (error) {
         console.error(error);
+        toast.error('Failed to load karat options. Please refresh the page.');
       }
     };
     fetchKarats();
@@ -90,6 +93,7 @@ export default function SellGoldPage() {
             const text = await uploadRes.text();
             console.error('Non-JSON error response:', text);
           }
+          toast.error(errorMessage);
           throw new Error(errorMessage);
         }
 
@@ -120,9 +124,11 @@ export default function SellGoldPage() {
         status: 'success',
         message: 'Your inquiry has been submitted successfully! We will contact you shortly.',
       });
+// inside onSubmit
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to submit inquiry.';
+      const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
       setSubmissionState({ status: 'error', message });
+      toast.error(message);
     }
   };
 

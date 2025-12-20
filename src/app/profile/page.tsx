@@ -20,6 +20,8 @@ import { countries } from 'country-data-list';
 import { UserProfile, OrderWithItems } from '@/lib/types';
 import { getOrderStatusVariant } from '@/lib/statusUtils';
 import ProfilePageLoading from '@/app/profile/loading';
+import { formatDate } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils/formatCurrency';
 
 export default function MyAccountPage() {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -139,12 +141,12 @@ export default function MyAccountPage() {
                     {user.orders.map((order: OrderWithItems) => (
                       <TableRow key={order.id} className="border-neutral-200">
                         <TableCell className="font-medium">
-                          {order.id.split('-')[0].toUpperCase()}
+                          #{order.displayId}
                         </TableCell>
                         <TableCell className="text-neutral-600">
-                          {new Date(order.createdAt).toLocaleDateString()}
+                          {formatDate(order.createdAt)}
                         </TableCell>
-                        <TableCell className="font-bold">${order.totalAmount.toString()}</TableCell>
+                        <TableCell className="font-bold">{formatCurrency(Number(order.totalAmount))}</TableCell>
                         <TableCell>
                           <Badge variant={getOrderStatusVariant(order.status)}>
                             {order.status}

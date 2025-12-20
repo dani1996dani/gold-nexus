@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
 import OrderDetailLoading from '@/app/admin/orders/[id]/loading';
+import { toast } from 'sonner';
 
 const ORDER_STATUSES = [
   'PENDING',
@@ -98,7 +99,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         setOrder(fetchedOrder);
       } catch (err) {
         setError('Failed to load order details.');
-        console.error('Error fetching order details:', err);
+        toast.error('Failed to load order details');
       } finally {
         setIsLoading(false);
       }
@@ -153,13 +154,16 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
       
       const updatedOrder = await res.json();
       setOrder(updatedOrder);
+      toast.success(`Order status updated to ${selectedNewStatus}`);
 
       console.log(`[STUB] Order status changed to ${selectedNewStatus}. Triggering email to customer.`);
       
       setIsConfirmModalOpen(false);
       setSelectedNewStatus(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      const msg = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setIsUpdatingStatus(false);
     }
@@ -326,5 +330,3 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     </div>
   );
 }
-
-

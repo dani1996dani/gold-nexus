@@ -9,7 +9,9 @@ import { ShoppingCartSheet } from '@/components/cart/shopping-cart-sheet';
 import { useAuthStore } from '@/lib/store/auth';
 import { useRouter } from 'next/navigation';
 
-export const Navbar = () => {
+import { toast } from 'sonner';
+
+export function Navbar() {
   const { isLoggedIn, logout, isLoading, user } = useAuthStore(); // Destructure user
   const router = useRouter();
 
@@ -18,6 +20,7 @@ export const Navbar = () => {
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch (error) {
       console.error('Logout failed:', error);
+      toast.error('Failed to log out');
     } finally {
       logout(); // Update global state
       router.push('/'); // Redirect to home

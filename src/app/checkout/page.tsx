@@ -17,11 +17,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Skeleton } from '@/components/ui/skeleton';
 import { shippingSchema, ShippingFormValues } from '@/lib/zod-schemas/shippingSchema';
+import { toast } from 'sonner';
 
 import { useAuthStore } from '@/lib/store/auth';
 
 export default function CheckoutPage() {
   const [isHydrated, setIsHydrated] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const { items } = useCartStore();
   const { isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
 
@@ -30,7 +32,8 @@ export default function CheckoutPage() {
   }, []);
 
   // Show skeleton while checking auth status OR rehydrating the cart
-  if (isAuthLoading || !isHydrated) {
+  // Also show skeleton (or spinner) if order was just placed to prevent "Empty Cart" flash during redirect
+  if (isAuthLoading || !isHydrated || orderPlaced) {
     return <CheckoutSkeleton />;
   }
 
@@ -45,18 +48,19 @@ export default function CheckoutPage() {
   }
 
   // If all checks pass, render the actual checkout form
-  return <CheckoutForm />;
+  return <CheckoutForm onOrderPlaced={() => setOrderPlaced(true)} />;
 }
 
 // --- SUB-COMPONENTS ---
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
   const { items } = useCartStore();
+  const [isProcessing, setIsProcessing] = useState(false);
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ShippingFormValues>({
     resolver: zodResolver(shippingSchema),
     // You can set default values here if needed
@@ -69,6 +73,7 @@ const CheckoutForm = () => {
   const router = useRouter();
 
   const onConfirmAndPay = async (data: ShippingFormValues) => {
+    setIsProcessing(true);
     try {
       // Normalize the data on the frontend before sending
       const payload = {
@@ -78,7 +83,7 @@ const CheckoutForm = () => {
         cartItems: items.map(item => ({ id: item.id, quantity: item.quantity })),
       };
 
-      const response = await fetch('/api/orders/create', {
+      const res = await fetch('/api/orders/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,24 +91,24 @@ const CheckoutForm = () => {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create order');
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Payment processing failed');
       }
 
-      const { checkoutUrl } = await response.json();
+      const { orderId } = await res.json();
       
-      // Clear the cart *after* successfully creating the order
+      // Prevent "Empty Cart" flash by setting this state first
+      onOrderPlaced();
+      
       clearCart();
+      router.push(`/order-confirmation/${orderId}`);
+      toast.success('Order placed successfully!');
 
-      // Redirect to Stripe (or our mock success page)
-      router.push(checkoutUrl);
-
-    } catch (error) {
-      console.error('Failed to process payment:', error);
-      // TODO: Replace with a more user-friendly notification (e.g., a Toast)
-      // @ts-expect-error an error bro.
-      alert(`Error: ${error.message}`);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to process payment. Please try again.');
+    } finally {
+      setIsProcessing(false);
     }
   };
   return (
@@ -260,10 +265,10 @@ const CheckoutForm = () => {
                 type="submit"
                 size="lg"
                 className="w-full rounded-md bg-black font-semibold text-white hover:bg-neutral-800"
-                disabled={isSubmitting}
+                disabled={isProcessing}
               >
                 <Lock className="mr-2 h-4 w-4" />
-                {isSubmitting ? 'Processing...' : 'Confirm and Pay'}
+                {isProcessing ? 'Processing...' : 'Confirm and Pay'}
               </Button>
             </CardContent>
           </Card>

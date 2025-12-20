@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, Upload, File as FileIcon, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
+import { toast } from 'sonner';
 
 export default function ImportPage() {
     const [files, setFiles] = useState<File[]>([]);
@@ -30,11 +31,13 @@ export default function ImportPage() {
 
     const { getRootProps: getImgRootProps, getInputProps: getImgInputProps, isDragActive: isImgDragActive } = useDropzone({
         onDrop: onDropImages,
+        onDropRejected: () => toast.error('Invalid file type. Only JPG, PNG, and WEBP images are allowed.'),
         accept: { 'image/*': ['.jpeg', '.png', '.jpg', '.webp'] }
     });
 
     const { getRootProps: getCsvRootProps, getInputProps: getCsvInputProps, isDragActive: isCsvDragActive } = useDropzone({
         onDrop: onDropCsv,
+        onDropRejected: () => toast.error('Invalid file type. Only CSV files are allowed.'),
         accept: { 'text/csv': ['.csv'] },
         maxFiles: 1,
     });
@@ -59,7 +62,7 @@ export default function ImportPage() {
             setUploadResults(data.results);
             setFiles([]); // Clear queue on success
         } catch (err) {
-            console.error(err);
+            toast.error('Failed to upload images');
         } finally {
             setUploading(false);
         }
@@ -85,10 +88,12 @@ export default function ImportPage() {
             setCsvReport(data);
             if (data.failed === 0) {
                 setCsvFile(null);
+                toast.success(`Successfully imported ${data.success} products.`);
+            } else {
+                toast.warning(`Imported ${data.success} products with ${data.failed} failures.`);
             }
         } catch (err) {
-            console.error(err);
-             // Handle generic error
+            toast.error('Failed to import CSV');
         } finally {
             setIsCsvUploading(false);
         }
@@ -145,7 +150,7 @@ export default function ImportPage() {
                 <CardContent className="space-y-4">
                      <div
                         {...getImgRootProps()}
-                        className={`flex min-h-[150px] w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 transition-colors ${
+                        className={`flex min-h-[150px] w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 transition-colors ${ 
                           isImgDragActive ? 'border-primary bg-primary/10' : 'bg-neutral-50 hover:bg-neutral-100'
                         }`}
                       >
@@ -223,7 +228,7 @@ export default function ImportPage() {
                 <CardContent className="space-y-4">
                     <div
                         {...getCsvRootProps()}
-                        className={`flex min-h-[150px] w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 transition-colors ${
+                        className={`flex min-h-[150px] w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 transition-colors ${ 
                             isCsvDragActive ? 'border-primary bg-primary/10' : 'bg-neutral-50 hover:bg-neutral-100'
                         }`}
                     >

@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json(
-      { orderId: newOrder.id, checkoutUrl: stripeSession.url },
+      { orderId: newOrder.id, displayId: newOrder.displayId, checkoutUrl: stripeSession.url },
       { status: 201 }
     );
   } catch (error) {
