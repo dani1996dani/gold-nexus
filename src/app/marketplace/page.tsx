@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQueryStates, parseAsArrayOf, parseAsString } from 'nuqs';
 import { ProductCard } from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
@@ -17,14 +17,24 @@ import {
 import { CATEGORIES } from '@/config/categories';
 import { Product, ProductCategory } from '@/generated/prisma/client';
 import MarketplaceLoading from '@/app/marketplace/loading';
+import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
+import { toast } from 'sonner';
 
 export default function MarketplacePage() {
   // --- STATE MANAGEMENT ---
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true); // Initial load
+  const [loadingMore, setLoadingMore] = useState(false); // Pagination load
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [tempCategories, setTempCategories] = useState<ProductCategory[]>([]);
+
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [hasFetchError, setHasFetchError] = useState(false);
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const isFetchingRef = useRef(false);
 
   const [query, setQuery] = useQueryStates({
     categories: parseAsArrayOf(parseAsString).withDefault([]),
@@ -32,24 +42,64 @@ export default function MarketplacePage() {
   });
 
   // --- DATA FETCHING ---
-  useEffect(() => {
-    const fetchProducts = async () => {
+  const fetchProducts = useCallback(
+    async (pageNum: number, isReset: boolean) => {
+      // Prevent duplicate requests
+      if (isFetchingRef.current) return;
+      isFetchingRef.current = true;
+      setHasFetchError(false);
+
       try {
-        const res = await fetch('/api/products');
-        if (!res.ok) {
-          throw new Error('Failed to fetch product');
+        if (isReset) {
+          setLoading(true);
+        } else {
+          setLoadingMore(true);
         }
-        const data: Product[] = await res.json();
-        setAllProducts(data);
-      } catch (err: unknown) {
-        // @ts-expect-error an error bro.
-        setError(err.message);
+
+        const params = new URLSearchParams();
+        params.set('page', pageNum.toString());
+        params.set('limit', '50');
+        params.set('sortBy', query.sortBy);
+        if (query.categories.length > 0) {
+          params.set('categories', query.categories.join(','));
+        }
+
+        const res = await fetch(`/api/products?${params.toString()}`);
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+
+        const data = await res.json();
+
+        if (isReset) {
+          setProducts(data.products);
+        } else {
+          setProducts((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id));
+            const newProducts = data.products.filter((p: Product) => !existingIds.has(p.id));
+            return [...prev, ...newProducts];
+          });
+        }
+
+        setTotalCount(data.metadata.total);
+        setHasMore(data.metadata.hasMore);
+      } catch (err: any) {
+        toast.error('Failed to fetch products');
+        setHasFetchError(true);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
+        isFetchingRef.current = false;
       }
-    };
-    fetchProducts();
-  }, []);
+    },
+    [query.categories, query.sortBy]
+  );
+
+  // Initial Fetch & Filter Changes (Reset)
+  useEffect(() => {
+    setPage(1);
+    fetchProducts(1, true);
+  }, [fetchProducts]);
 
   // Sync URL query state with temp state for the filter sidebar
   useEffect(() => {
@@ -59,21 +109,33 @@ export default function MarketplacePage() {
     setTempCategories(validCategories);
   }, [query.categories]);
 
-  // --- FILTERING AND SORTING LOGIC ---
-  const filteredProducts = useMemo(() => {
-    let products: Product[] = [...allProducts];
+  // --- INFINITE SCROLL OBSERVER ---
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading && !loadingMore && !hasFetchError) {
+          setPage((prev) => {
+            const nextPage = prev + 1;
+            fetchProducts(nextPage, false);
+            return nextPage;
+          });
+        }
+      },
+      { threshold: 1.0 }
+    );
 
-    if (query.categories.length > 0) {
-      products = products.filter((p) => query.categories.includes(p.category));
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
     }
-    products.sort((a, b) => {
-      const priceA = a.price as unknown as number;
-      const priceB = b.price as unknown as number;
-      if (query.sortBy === 'price-desc') return priceB - priceA;
-      return priceA - priceB;
-    });
-    return products;
-  }, [query.categories, query.sortBy, allProducts]);
+
+    const currentTarget = observerTarget.current;
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMore, loading, loadingMore, fetchProducts]);
 
   const handleCategoryChange = (category: ProductCategory) => {
     setTempCategories((prev) =>
@@ -90,11 +152,8 @@ export default function MarketplacePage() {
     setIsSheetOpen(false);
   };
 
-  if (loading) {
+  if (loading && page === 1) {
     return <MarketplaceLoading />;
-  }
-  if (error) {
-    return <div className="p-12 text-center text-red-500">Error: {error}</div>;
   }
 
   return (
@@ -114,7 +173,9 @@ export default function MarketplacePage() {
               <div>
                 <h1 className="mb-2 font-serif text-4xl font-medium">Live Market</h1>
                 <p className="text-sm text-muted-foreground">
-                  Showing {filteredProducts.length} assets
+                  {products.length > 0
+                    ? `Showing ${products.length} of ${totalCount} assets`
+                    : 'No assets found'}
                 </p>
               </div>
               <div className="flex w-full items-center gap-4 md:w-auto">
@@ -155,14 +216,28 @@ export default function MarketplacePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <ProductCard product={product} key={product.id} />
-                ))
-              ) : (
-                <NoResultsFound onClear={clearFilters} />
+              {products.length > 0
+                ? products.map((product) => <ProductCard product={product} key={product.id} />)
+                : !loading && <NoResultsFound onClear={clearFilters} />}
+              {loadingMore && (
+                <>
+                  <ProductCardSkeleton />
+                  <ProductCardSkeleton />
+                  <ProductCardSkeleton />
+                </>
               )}
             </div>
+
+            {/* Sentinel for Intersection Observer or Retry Button */}
+            {!hasFetchError ? (
+              <div ref={observerTarget} className="h-4 w-full" />
+            ) : (
+              <div className="flex justify-center py-4">
+                <Button variant="outline" onClick={() => fetchProducts(page, false)}>
+                  Retry Loading More
+                </Button>
+              </div>
+            )}
           </section>
         </div>
       </main>
@@ -173,7 +248,7 @@ export default function MarketplacePage() {
 const NoResultsFound = ({ onClear }: { onClear: () => void }) => (
   <div className="col-span-full mt-12 flex flex-col items-center justify-center text-center">
     <h2 className="font-serif text-2xl font-medium">No Assets Found</h2>
-    <p className="mt-2 text-muted-foreground">Try adjusting your filters or view all products.</p>
+    <p className="mt-2 text-muted-foreground">Try adjusting your filters.</p>
     <Button onClick={onClear} className="mt-6">
       Clear Filters
     </Button>
