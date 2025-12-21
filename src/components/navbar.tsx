@@ -10,6 +10,7 @@ import { useAuthStore } from '@/lib/store/auth';
 import { useRouter } from 'next/navigation';
 
 import { toast } from 'sonner';
+import { authFetch } from '@/lib/auth-fetch';
 
 export function Navbar() {
   const { isLoggedIn, logout, isLoading, user } = useAuthStore(); // Destructure user
@@ -17,7 +18,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await authFetch('/api/auth/logout', { method: 'POST' });
     } catch (error) {
       console.error('Logout failed:', error);
       toast.error('Failed to log out');

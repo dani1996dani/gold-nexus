@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
+import { authFetch } from '@/lib/auth-fetch';
 
 // This type should be defined based on what getOrderById returns
 // to avoid importing server-only types
@@ -83,7 +84,7 @@ export function OrderDetailClient({ order, statuses }: OrderDetailClientProps) {
     setIsUpdatingStatus(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/orders/${order.id}`, {
+      const res = await authFetch(`/api/admin/orders/${order.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: selectedNewStatus }),

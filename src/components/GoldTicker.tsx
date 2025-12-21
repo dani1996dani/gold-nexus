@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { authFetch } from '@/lib/auth-fetch';
 
 interface GoldPriceData {
   currentPrice: string;
@@ -16,7 +17,7 @@ export const GoldTicker = () => {
   useEffect(() => {
     const fetchGoldPrice = async () => {
       try {
-        const res = await fetch('/api/gold-price');
+        const res = await authFetch('/api/gold-price');
         if (!res.ok) {
           throw new Error('Failed to load market data');
         }
