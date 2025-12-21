@@ -31,31 +31,33 @@ export function Navbar() {
     <div className="sticky top-0 z-50">
       <GoldTicker />
       <nav className="border-b border-gray-200 bg-white shadow-sm">
-        <div className="container mx-auto pl-4 md:px-4">
+        <div className="w-full px-4 md:px-32">
           <div className="flex h-16 items-center justify-between">
-            {/* --- LEFT SIDE: LOGO --- */}
-            <Link href="/">
-              <div className="font-serif text-2xl font-bold text-[#1a202c]">Gold Nexus</div>
-            </Link>
+            {/* --- LEFT SIDE: LOGO & NAVIGATION --- */}
+            <div className="flex items-center gap-8">
+              <Link href="/">
+                <div className="font-serif text-2xl font-bold text-[#1a202c]">Gold Nexus</div>
+              </Link>
 
-            {/* --- CENTER: DESKTOP NAVIGATION --- */}
-            <div
-              className={`hidden items-center gap-8 md:flex ${
-                isLoading ? 'opacity-0' : 'animate-fadeIn'
-              }`}
-            >
-              <Link
-                href="/marketplace"
-                className="font-medium text-[#1a202c] transition-colors hover:text-[#D4AF37]"
+              {/* DESKTOP NAVIGATION */}
+              <div
+                className={`hidden items-center gap-8 md:flex ${
+                  isLoading ? 'opacity-0' : 'animate-fadeIn'
+                }`}
               >
-                Buy Gold
-              </Link>
-              <Link
-                href="/sell-gold"
-                className="font-medium text-[#1a202c] transition-colors hover:text-[#D4AF37]"
-              >
-                Sell Gold
-              </Link>
+                <Link
+                  href="/marketplace"
+                  className="font-medium text-[#1a202c] transition-colors hover:text-[#D4AF37]"
+                >
+                  Buy Gold
+                </Link>
+                <Link
+                  href="/sell-gold"
+                  className="font-medium text-[#1a202c] transition-colors hover:text-[#D4AF37]"
+                >
+                  Sell Gold
+                </Link>
+              </div>
             </div>
 
             {/* --- RIGHT SIDE: ACTIONS --- */}
