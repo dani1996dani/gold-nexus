@@ -14,8 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CountryDropdown } from '@/components/ui/country-dropdown';
+import { CountryDropdown, Country } from '@/components/ui/country-dropdown';
 import { countries } from 'country-data-list';
+import { Pencil, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { UserProfile, OrderWithItems } from '@/lib/types';
 import { getOrderStatusVariant } from '@/lib/statusUtils';
@@ -28,6 +30,15 @@ export default function MyAccountPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Edit states
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phoneNumber: '',
+    country: '',
+  });
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -37,6 +48,11 @@ export default function MyAccountPage() {
         }
         const data: UserProfile = await res.json();
         setUser(data);
+        setFormData({
+          fullName: data.fullName,
+          phoneNumber: data.phoneNumber,
+          country: data.country,
+        });
       } catch (err: unknown) {
         // @ts-expect-error an error bro.
         setError(err.message);
@@ -47,9 +63,53 @@ export default function MyAccountPage() {
     fetchUserData();
   }, []);
 
-  const selectedCountryObject = user
-    ? countries.all.find((c) => c.name === user.country)
-    : undefined;
+  const handleToggleEdit = () => {
+    if (isEditing) {
+      // Cancel edit: reset form data
+      if (user) {
+        setFormData({
+          fullName: user.fullName,
+          phoneNumber: user.phoneNumber,
+          country: user.country,
+        });
+      }
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleSaveChanges = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/users/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to update profile');
+      }
+
+      const updatedUser = await res.json();
+      setUser({ ...user, ...updatedUser }); // Update local user state
+      setIsEditing(false);
+      toast.success('Profile updated successfully');
+    } catch (err: any) {
+      toast.error(err.message || 'An error occurred while saving changes');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const selectedCountryObject = countries.all.find((c) => c.name === formData.country);
+
+  const hasChanges =
+    user &&
+    (formData.fullName !== user.fullName ||
+      formData.phoneNumber !== user.phoneNumber ||
+      formData.country !== user.country);
 
   if (loading) {
     return <ProfilePageLoading />;
@@ -67,56 +127,98 @@ export default function MyAccountPage() {
       <main className="mx-auto max-w-4xl">
         <h1 className="mb-8 font-serif text-4xl font-bold text-black">My Account</h1>
         <Card className="border-neutral-200 bg-white shadow-none">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between border-b border-neutral-100 pb-4">
             <CardTitle className="font-sans text-xl font-semibold">Profile Details</CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleToggleEdit}
+              className="h-8 w-8 rounded-full p-0"
+              title={isEditing ? 'Cancel' : 'Edit Profile'}
+            >
+              {isEditing ? (
+                <X className="h-4 w-4 text-neutral-500" />
+              ) : (
+                <Pencil className="h-4 w-4 text-neutral-500" />
+              )}
+            </Button>
           </CardHeader>
-          <CardContent>
-            <form className="space-y-6">
+          <CardContent className="pt-6">
+            <form onSubmit={handleSaveChanges} className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="full-name">Full Name</Label>
-                  <Input
-                    id="full-name"
-                    value={user.fullName}
-                    readOnly
-                    className="rounded-md border-neutral-300 bg-gray-100"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={user.email}
-                    readOnly
-                    className="rounded-md border-neutral-300 bg-gray-100"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
-                  {selectedCountryObject && (
-                    <CountryDropdown value={selectedCountryObject} disabled />
+                  <Label htmlFor="full-name" className="text-neutral-500">
+                    Full Name
+                  </Label>
+                  {isEditing ? (
+                    <Input
+                      id="full-name"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      className="rounded-md border-neutral-300"
+                      required
+                    />
+                  ) : (
+                    <p className="py-2 font-medium text-black">{user.fullName}</p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone-number">Phone Number</Label>
-                  <Input
-                    id="phone-number"
-                    value={user.phoneNumber}
-                    readOnly
-                    className="rounded-md border-neutral-300 bg-gray-100"
-                  />
+                  <Label htmlFor="email" className="text-neutral-500">
+                    Email Address
+                  </Label>
+                  <p className="py-2 text-neutral-400">{user.email}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country" className="text-neutral-500">
+                    Country
+                  </Label>
+                  {isEditing ? (
+                    <CountryDropdown
+                      value={selectedCountryObject}
+                      onChange={(country: Country) =>
+                        setFormData({ ...formData, country: country.name })
+                      }
+                    />
+                  ) : (
+                    <p className="py-2 font-medium text-black">{user.country}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone-number" className="text-neutral-500">
+                    Phone Number
+                  </Label>
+                  {isEditing ? (
+                    <Input
+                      id="phone-number"
+                      value={formData.phoneNumber}
+                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                      className="rounded-md border-neutral-300"
+                      required
+                    />
+                  ) : (
+                    <p className="py-2 font-medium text-black">{user.phoneNumber}</p>
+                  )}
                 </div>
               </div>
-              <div className="flex w-full flex-row justify-end pt-2">
-                <Button
-                  type="submit"
-                  disabled
-                  className="rounded-md bg-black px-6 font-semibold text-white hover:bg-neutral-800"
-                >
-                  Save Changes
-                </Button>
-              </div>
+              {isEditing && (
+                <div className="flex w-full flex-row justify-end gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleToggleEdit}
+                    className="rounded-md border-neutral-300"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSaving || !hasChanges}
+                    className="rounded-md bg-black px-6 font-semibold text-white hover:bg-neutral-800 disabled:opacity-50"
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </div>
+              )}
             </form>
           </CardContent>
         </Card>

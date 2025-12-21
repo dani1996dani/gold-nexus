@@ -94,13 +94,13 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - `[x]` **Error display in FE:**
   - `[x]` Make all errors show a toast instead of alerts or console logs etc
   - `[x]` Country dropdown validation text in checkout is horrible, need custom text. (maybe needed in all places with country dropdown)
-- `[ ]` **Editable User Profile:**
-  - `[ ]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
+- `[x]` **Editable User Profile:**
+  - `[x]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
 - `[x]` add pagination (infi scroll) in live market (probably needs some BE work as well)
 - `[ ]` **create a custom 404 page?**
 - `[ ]` **admin panel is seen on mobile in navbar but im fully locked out on mobile?? no matter how much i refresh??**
 - `[x]` **fix gold price. it barely updates. maybe set up a cron job on cron-job.org?**
-- `[ ]` **navbar - buy gold and sell gold are not visually aligned to the page.. fix it**
+- `[x]` **navbar - buy gold and sell gold are not visually aligned to the page.. fix it**
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
 
