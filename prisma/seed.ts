@@ -8,8 +8,16 @@ import { faker } from '@faker-js/faker';
 async function main() {
   console.log('Start seeding...');
 
-  console.log('Seeding Karat values...');
+  // --- CLEAN SLATE (Respecting Foreign Keys) ---
+  // console.log('Cleaning existing data...');
+  // await prisma.orderItem.deleteMany({});
+  // await prisma.order.deleteMany({});
+  // await prisma.product.deleteMany({});
   // await prisma.karat.deleteMany({});
+  // await prisma.secondHandLead.deleteMany({});
+  // console.log('Clean slate achieved.');
+
+  console.log('Seeding Karat values...');
   const karatData = [
     { name: '24K', purity: new Decimal(0.999) },
     { name: '22K', purity: new Decimal(0.9167) },
@@ -29,9 +37,6 @@ async function main() {
     });
   }
   console.log('Karat seeding finished.');
-
-  // await prisma.product.deleteMany({});
-  // console.log('Deleted existing products.');
 
   const products = [
     {
@@ -127,8 +132,6 @@ async function main() {
   console.log(`Upserted user with id: ${user.id}`);
 
   console.log('Seeding 58 orders...');
-  await prisma.orderItem.deleteMany({});
-  await prisma.order.deleteMany({});
 
   // Fetch a product to link to order items
   const seedProduct = await prisma.product.findFirst();
@@ -182,7 +185,6 @@ async function main() {
   }
 
   console.log('Seeding 58 leads...');
-  await prisma.secondHandLead.deleteMany({});
 
   const leadImages = [
     'https://ctaiwooelzfacgkukunb.supabase.co/storage/v1/object/public/gold-nexus-images/TEST-JEWELRY-1.png',
