@@ -128,11 +128,33 @@ export function Navbar() {
                             </Link>
                           </SheetClose>
                           {user?.role === 'ADMIN' && ( // Conditional render for admin
-                            <SheetClose asChild>
-                              <Link href="/admin" className="text-lg font-medium text-[#1a202c]">
-                                Admin Panel
-                              </Link>
-                            </SheetClose>
+                            <>
+                              <SheetClose asChild>
+                                <Link href="/admin" className="text-lg font-medium text-[#1a202c]">
+                                  Admin Panel
+                                </Link>
+                              </SheetClose>
+                              <div className="ml-4 flex flex-col space-y-4 border-l-2 border-neutral-100 pl-4">
+                                <SheetClose asChild>
+                                  <Link
+                                    href="/admin/products"
+                                    className="text-base text-neutral-600"
+                                  >
+                                    Products
+                                  </Link>
+                                </SheetClose>
+                                <SheetClose asChild>
+                                  <Link href="/admin/orders" className="text-base text-neutral-600">
+                                    Orders
+                                  </Link>
+                                </SheetClose>
+                                <SheetClose asChild>
+                                  <Link href="/admin/leads" className="text-base text-neutral-600">
+                                    Leads
+                                  </Link>
+                                </SheetClose>
+                              </div>
+                            </>
                           )}
                         </>
                       ) : (

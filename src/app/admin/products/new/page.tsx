@@ -92,7 +92,7 @@ export default function NewProductPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Link href="/admin/products">
             <Button variant="outline" size="icon">
@@ -101,11 +101,19 @@ export default function NewProductPage() {
           </Link>
           <h1 className="text-2xl font-semibold">New Product</h1>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push('/admin/products')}>
+        <div className="flex w-full gap-2 sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={() => router.push('/admin/products')}
+            className="flex-1 sm:flex-none"
+          >
             Cancel
           </Button>
-          <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            disabled={isSubmitting}
+            className="flex-1 sm:flex-none"
+          >
             <Save className="mr-2 h-4 w-4" />
             {isSubmitting ? 'Creating...' : 'Create Product'}
           </Button>

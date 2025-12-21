@@ -145,23 +145,33 @@ export default function EditProductPage() {
         isConfirming={isDeleting}
       />
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Link href="/admin/products">
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="h-9 w-9">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <h1 className="text-2xl font-semibold">Edit Product</h1>
         </div>
-        <div className="flex gap-2">
-          <Button variant="destructive" onClick={() => setShowDeleteModal(true)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
-          </Button>
-          <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-            <Save className="mr-2 h-4 w-4" />
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
-          </Button>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button
+              variant="destructive"
+              onClick={() => setShowDeleteModal(true)}
+              className="flex-1 sm:flex-none"
+            >
+              <Trash className="mr-2 h-4 w-4" /> Delete
+            </Button>
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+              className="flex-1 bg-black text-white hover:bg-neutral-800 sm:flex-none"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
         </div>
       </div>
 
