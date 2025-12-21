@@ -11,6 +11,7 @@ import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function OrderConfirmationPage() {
   const params = useParams();
@@ -25,7 +26,7 @@ export default function OrderConfirmationPage() {
 
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`/api/orders/${id}`);
+        const res = await authFetch(`/api/orders/${id}`);
         if (!res.ok) {
           throw new Error('Failed to load order');
         }

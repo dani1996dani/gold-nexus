@@ -19,6 +19,7 @@ import { Product, ProductCategory } from '@/generated/prisma/client';
 import MarketplaceLoading from '@/app/marketplace/loading';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { toast } from 'sonner';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function MarketplacePage() {
   // --- STATE MANAGEMENT ---
@@ -64,7 +65,7 @@ export default function MarketplacePage() {
           params.set('categories', query.categories.join(','));
         }
 
-        const res = await fetch(`/api/products?${params.toString()}`);
+        const res = await authFetch(`/api/products?${params.toString()}`);
         if (!res.ok) {
           throw new Error('Failed to fetch products');
         }

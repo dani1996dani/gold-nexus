@@ -22,6 +22,7 @@ import { FileUploader } from '@/components/ui/file-uploader';
 import { Karat } from '@/generated/prisma/client';
 
 import { toast } from 'sonner';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function SellGoldPage() {
   const [submissionState, setSubmissionState] = useState<{
@@ -35,7 +36,7 @@ export default function SellGoldPage() {
   useEffect(() => {
     const fetchKarats = async () => {
       try {
-        const res = await fetch('/api/karats');
+        const res = await authFetch('/api/karats');
         if (!res.ok) throw new Error('Failed to fetch karats');
         const data = await res.json();
         setKarats(data);
@@ -87,7 +88,7 @@ export default function SellGoldPage() {
         const formData = new FormData();
         formData.append('file', file);
 
-        const uploadRes = await fetch('/api/leads/upload', {
+        const uploadRes = await authFetch('/api/leads/upload', {
           method: 'POST',
           body: formData,
         });
@@ -118,7 +119,7 @@ export default function SellGoldPage() {
         photoUrls: photoUrls, // Override with the real URLs
       };
 
-      const response = await fetch('/api/leads', {
+      const response = await authFetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionData),

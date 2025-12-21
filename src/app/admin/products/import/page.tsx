@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function ImportPage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -73,7 +74,7 @@ export default function ImportPage() {
     files.forEach((file) => formData.append('files', file));
 
     try {
-      const res = await fetch('/api/admin/products/upload-images', {
+      const res = await authFetch('/api/admin/products/upload-images', {
         method: 'POST',
         body: formData,
       });
@@ -99,7 +100,7 @@ export default function ImportPage() {
     formData.append('file', csvFile);
 
     try {
-      const res = await fetch('/api/admin/products/import-csv', {
+      const res = await authFetch('/api/admin/products/import-csv', {
         method: 'POST',
         body: formData,
       });

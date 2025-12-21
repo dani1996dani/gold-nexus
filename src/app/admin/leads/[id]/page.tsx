@@ -18,6 +18,7 @@ import {
 import { formatCurrency } from '@/lib/utils/formatCurrency';
 import LeadDetailLoading from '@/app/admin/leads/[id]/loading';
 import { formatWeight } from '@/lib/utils/formatWeight';
+import { authFetch } from '@/lib/auth-fetch';
 
 const LEAD_STATUSES = ['SUBMITTED', 'CONTACTED', 'CLOSED'] as const;
 
@@ -55,7 +56,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
     async function fetchData() {
       try {
         const { id } = await params;
-        const res = await fetch(`/api/admin/leads/${id}`);
+        const res = await authFetch(`/api/admin/leads/${id}`);
         if (!res.ok) {
           if (res.status === 404) {
             notFound();
@@ -87,7 +88,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
     setSelectValue(newStatus);
 
     try {
-      const res = await fetch(`/api/admin/leads/${lead!.id}`, {
+      const res = await authFetch(`/api/admin/leads/${lead!.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),

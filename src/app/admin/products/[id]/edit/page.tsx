@@ -23,6 +23,7 @@ import { ArrowLeft, Save, Trash } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
 import ProductEditLoading from '@/app/admin/products/[id]/edit/loading';
+import { authFetch } from '@/lib/auth-fetch';
 
 const productSchema = z.object({
   sku: z.string().min(1, 'SKU is required'),
@@ -73,7 +74,7 @@ export default function EditProductPage() {
     async function fetchProduct() {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/admin/products/${id}`);
+        const res = await authFetch(`/api/admin/products/${id}`);
         if (!res.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -92,7 +93,7 @@ export default function EditProductPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/products/${id}`, {
+      const res = await authFetch(`/api/admin/products/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -115,7 +116,7 @@ export default function EditProductPage() {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/admin/products/${id}`, {
+      const res = await authFetch(`/api/admin/products/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete');
