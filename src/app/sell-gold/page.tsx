@@ -124,6 +124,7 @@ export default function SellGoldPage() {
         status: 'success',
         message: 'Your inquiry has been submitted successfully! We will contact you shortly.',
       });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       // inside onSubmit
     } catch (error) {
       const message =

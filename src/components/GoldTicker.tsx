@@ -74,6 +74,11 @@ export const GoldTicker = () => {
     );
   };
 
+  if (error) {
+    // gracefully hide the item
+    return null;
+  }
+
   return (
     <div className="border-b border-gray-200 bg-[#F9FAFB] py-2">
       <div className="container mx-auto px-4">
