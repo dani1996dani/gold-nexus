@@ -28,6 +28,7 @@ import {
 import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
 import OrderDetailLoading from '@/app/admin/orders/[id]/loading';
 import { toast } from 'sonner';
+import { authFetch } from '@/lib/auth-fetch';
 
 const ORDER_STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'FAILED'] as const;
 
@@ -77,7 +78,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     async function fetchData() {
       try {
         const { id } = await params;
-        const res = await fetch(`/api/admin/orders/${id}`);
+        const res = await authFetch(`/api/admin/orders/${id}`);
 
         if (!res.ok) {
           if (res.status === 404) {
@@ -134,7 +135,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
     setIsUpdatingStatus(true);
     try {
-      const res = await fetch(`/api/admin/orders/${order.id}`, {
+      const res = await authFetch(`/api/admin/orders/${order.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: selectedNewStatus }),

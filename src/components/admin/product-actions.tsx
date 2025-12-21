@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ConfirmActionModal } from '@/components/admin/confirm-action-modal';
 
+import { authFetch } from '@/lib/auth-fetch';
 import { toast } from 'sonner';
 
 interface ProductActionsProps {
@@ -28,7 +29,7 @@ export function ProductActions({ productId, productName }: ProductActionsProps) 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/admin/products/${productId}`, {
+      const res = await authFetch(`/api/admin/products/${productId}`, {
         method: 'DELETE',
       });
 

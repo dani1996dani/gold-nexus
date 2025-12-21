@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { authFetch } from '@/lib/auth-fetch';
 
 const productSchema = z.object({
   sku: z.string().min(1, 'SKU is required'),
@@ -70,7 +71,7 @@ export default function NewProductPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/products', {
+      const res = await authFetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

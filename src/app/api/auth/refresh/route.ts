@@ -27,24 +27,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid or expired refresh token' }, { status: 401 });
     }
 
-    // 2. If valid, issue a new access token
-    const newAccessToken = jwt.sign(
-      { userId: decoded.userId, role: decoded.role }, // Carry over the user info
-      privateKey,
-      { algorithm: 'RS256', expiresIn: '15m' }
-    );
+    // 2. If valid, issue a new access token AND a new refresh token (Rolling Session)
+    const newAccessToken = jwt.sign({ userId: decoded.userId, role: decoded.role }, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: '15m',
+    });
 
-    // 3. Send the new access token back
+    const newRefreshToken = jwt.sign({ userId: decoded.userId, role: decoded.role }, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: '30d',
+    });
+
+    // 3. Send the new tokens back
     const response = NextResponse.json(
       { message: 'Token refreshed successfully' },
       { status: 200 }
     );
+
     response.cookies.set('accessToken', newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 15, // 15 minutes
+    });
+
+    response.cookies.set('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30, // 30 days
     });
 
     return response;

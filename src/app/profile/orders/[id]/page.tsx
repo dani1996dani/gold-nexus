@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { OrderStatus } from '@/generated/prisma/client';
 import { OrderWithItems } from '@/lib/types';
+import { authFetch } from '@/lib/auth-fetch';
 
 interface ShippingAddress {
   firstName: string;
@@ -42,7 +43,7 @@ export default function OrderDetailPage() {
 
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`/api/orders/${id}`);
+        const res = await authFetch(`/api/orders/${id}`);
         if (!res.ok) {
           if (res.status === 403) throw new Error('Access denied');
           throw new Error('Failed to load order');

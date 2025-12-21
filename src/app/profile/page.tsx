@@ -25,6 +25,7 @@ import { getOrderStatusVariant } from '@/lib/statusUtils';
 import ProfilePageLoading from '@/app/profile/loading';
 import { formatDate } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function MyAccountPage() {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -44,7 +45,7 @@ export default function MyAccountPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch('/api/users/me');
+        const res = await authFetch('/api/users/me');
         if (!res.ok) {
           throw new Error('Failed to fetch user data');
         }
@@ -83,7 +84,7 @@ export default function MyAccountPage() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const res = await fetch('/api/users/me', {
+      const res = await authFetch('/api/users/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

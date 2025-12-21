@@ -20,6 +20,7 @@ import { shippingSchema, ShippingFormValues } from '@/lib/zod-schemas/shippingSc
 import { toast } from 'sonner';
 
 import { useAuthStore } from '@/lib/store/auth';
+import { authFetch } from '@/lib/auth-fetch';
 
 export default function CheckoutPage() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -83,7 +84,7 @@ const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
         cartItems: items.map((item) => ({ id: item.id, quantity: item.quantity })),
       };
 
-      const res = await fetch('/api/orders/create', {
+      const res = await authFetch('/api/orders/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
