@@ -58,7 +58,7 @@ export async function getAuthenticatedAdmin(
         return await fetchAdminUser(decoded.userId);
       }
     } catch (error) {
-      console.error('Refresh token auth check failed:', error);
+      console.error('[Auth] Refresh token verification failed:', error);
     }
   }
 

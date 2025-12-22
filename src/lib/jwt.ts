@@ -57,7 +57,7 @@ export function createAndSetSession(user: Omit<User, 'password'>) {
   response.cookies.set('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     path: '/',
     maxAge: 60 * 15, // 15 minutes
   });
@@ -65,7 +65,7 @@ export function createAndSetSession(user: Omit<User, 'password'>) {
   response.cookies.set('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 30, // 30 days
   });

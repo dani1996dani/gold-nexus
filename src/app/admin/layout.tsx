@@ -4,6 +4,9 @@ import { UnauthorizedAccess } from '@/components/admin/unauthorized-access';
 import { getAuthenticatedAdmin } from '@/lib/data/auth';
 import { AdminSidebarNav } from '@/components/admin/admin-sidebar-nav';
 
+// Force dynamic rendering to prevent caching of auth state
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // Allow refresh token check for initial page load to prevent "Access Denied" flash
   // The client-side AuthProvider will handle the actual token rotation.
