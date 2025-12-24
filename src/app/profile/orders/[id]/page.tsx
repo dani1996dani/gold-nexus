@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Package, Truck, Clock, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Package, Truck, CreditCard, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils/formatCurrency';
@@ -204,13 +204,13 @@ export default function OrderDetailPage() {
 
 function OrderStatusTracker({ status }: { status: OrderStatus }) {
   const steps = [
-    { id: 'PENDING', label: 'Order Placed', icon: Clock },
+    { id: 'PAID', label: 'Payment Received', icon: CreditCard },
     { id: 'PROCESSING', label: 'Processing', icon: Package },
-    { id: 'SHIPPED', label: 'In Transit', icon: Truck },
+    { id: 'SHIPPED', label: 'Shipped', icon: Truck },
   ];
 
   const getStatusIndex = (s: string) => {
-    if (s === 'PENDING') return 0;
+    if (s === 'UNPAID' || s === 'PAID') return 0;
     if (s === 'PROCESSING') return 1;
     if (s === 'SHIPPED' || s === 'COMPLETED') return 2;
     return -1;

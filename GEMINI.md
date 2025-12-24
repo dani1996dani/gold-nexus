@@ -50,7 +50,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 
 ### MILESTONE 3: Full Backend Logic, Security & Full DB Logic
 
-- `[x]` **STATUS: IN PROGRESS (Funded)**
+- `[x]` **STATUS: DELIVERED & PAID**
 - `[x]` **Database Setup:**
   - `[x]` Full Prisma schema defined for all models.
   - `[x]` Local Docker environment is functional.
@@ -105,15 +105,23 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
 
-- `[ ]` **STATUS: PENDING**
-- `[ ]` Stripe Checkout integration.
-- `[ ]` Stripe Webhook confirmation.
-- `[ ]` Transactional email flows (e.g., order confirmation).
-- `[ ]` There is no forgot password flow atm. remove? or implement?
-- `[ ]` Configure production cron job schedule (e.g., every 30 minutes).
-- `[ ]` Final production deployment hand-off.
+- `[ ]` **STATUS: IN PROGRESS**
+- `[x]` **Stripe Backend Infrastructure:**
+  - `[x]` Initialize Stripe SDK (`src/lib/stripe.ts`).
+  - `[x]` `POST /api/orders/create` generates PaymentIntent and returns `clientSecret`.
+  - `[x]` Webhook listener (`src/app/api/webhooks/stripe/route.ts`) handles `payment_intent.succeeded` and updates order status.
+- `[x]` **Stripe Frontend Integration:**
+  - `[x]` Embedded `PaymentElement` in Checkout flow.
+  - `[x]` Two-step Checkout: Shipping Info -> Secure Payment.
+  - `[x]` Success redirect to `/order-confirmation/[id]`.
+- `[ ]` **Remaining Tasks:**
+  - `[ ]` Configure staging and production Environment Variables (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`).
+  - `[x]` Local Webhook Testing: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
+  - `[ ]` Transactional email flows (e.g., order confirmation).
+  - `[ ]` Configure production cron job schedule (e.g., every 30 minutes).
+  - `[ ]` Final production deployment hand-off.
 
-## 6. Authentication Architecture (Updated)
+## 6. Authentication Architecture
 
 - **Utility:** `authFetch` (from `@/lib/auth-fetch`) is the standard for all **client-side** API requests.
 - **Behavior:** It wraps the native `fetch`, automatically handling `401 Unauthorized` responses by:

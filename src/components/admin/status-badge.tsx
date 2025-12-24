@@ -11,7 +11,10 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
   switch (status) {
     // Lead Statuses
     case 'SUBMITTED':
-    case 'PENDING': // For orders
+    case 'UNPAID': // For orders
+      colorClasses = 'bg-slate-100 text-slate-800 hover:bg-slate-100/80';
+      break;
+    case 'PAID': // For orders
       colorClasses = 'bg-blue-100 text-blue-800 hover:bg-blue-100/80';
       break;
     case 'CONTACTED':

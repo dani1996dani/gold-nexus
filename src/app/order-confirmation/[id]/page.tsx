@@ -11,6 +11,7 @@ import { formatCurrency } from '@/lib/utils/formatCurrency';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { useCartStore } from '@/lib/store/cart';
 import { authFetch } from '@/lib/auth-fetch';
 
 export default function OrderConfirmationPage() {
@@ -20,6 +21,12 @@ export default function OrderConfirmationPage() {
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { clearCart } = useCartStore();
+
+  useEffect(() => {
+    // Clear the cart as soon as the user reaches this page successfully
+    clearCart();
+  }, [clearCart]);
 
   useEffect(() => {
     if (!id) return;
@@ -64,8 +71,9 @@ export default function OrderConfirmationPage() {
           <CheckCircle className="h-16 w-16 text-green-500" />
           <h1 className="font-serif text-4xl font-medium text-gray-900">Order Confirmed!</h1>
           <p className="text-lg text-gray-600">
-            Thank you for your purchase. Your order{' '}
-            <span className="font-semibold text-black">#{order.displayId}</span> has been received.
+            Thank you for your purchase. <br />
+            Your order number is{' '}
+            <span className="font-semibold text-black">#{order.displayId}</span>.
           </p>
         </div>
 
@@ -111,14 +119,14 @@ export default function OrderConfirmationPage() {
           </CardContent>
         </Card>
 
-        <div className="flex justify-center gap-4">
-          <Link href="/marketplace">
-            <Button variant="outline" className="h-12 px-8">
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Link href="/marketplace" className="order-2 w-full sm:order-1 sm:w-auto">
+            <Button variant="outline" className="h-12 w-full px-8">
               Continue Shopping
             </Button>
           </Link>
-          <Link href="/profile">
-            <Button className="h-12 bg-black px-8 text-white hover:bg-gray-800">
+          <Link href="/profile" className="order-1 w-full sm:order-2 sm:w-auto">
+            <Button className="h-12 w-full bg-black px-8 text-white hover:bg-gray-800">
               View My Orders
             </Button>
           </Link>

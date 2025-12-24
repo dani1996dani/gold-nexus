@@ -12,6 +12,8 @@ type BadgeVariant =
 
 export const getOrderStatusVariant = (status: OrderStatus): BadgeVariant => {
   switch (status) {
+    case 'PAID':
+      return 'default';
     case 'PROCESSING':
       return 'processing';
     case 'SHIPPED':
@@ -20,8 +22,8 @@ export const getOrderStatusVariant = (status: OrderStatus): BadgeVariant => {
       return 'delivered'; // Map 'COMPLETED' data status to 'delivered' UI variant
     case 'FAILED':
       return 'destructive'; // Map 'FAILED' to 'destructive'
-    case 'PENDING':
+    case 'UNPAID':
     default:
-      return 'secondary'; // Use 'secondary' for PENDING and any other case
+      return 'secondary'; // Use 'secondary' for UNPAID and any other case
   }
 };

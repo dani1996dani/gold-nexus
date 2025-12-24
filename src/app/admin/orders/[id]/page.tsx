@@ -30,7 +30,7 @@ import OrderDetailLoading from '@/app/admin/orders/[id]/loading';
 import { toast } from 'sonner';
 import { authFetch } from '@/lib/auth-fetch';
 
-const ORDER_STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'FAILED'] as const;
+const ORDER_STATUSES = ['UNPAID', 'PAID', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'FAILED'] as const;
 
 type OrderDetail = {
   id: string;

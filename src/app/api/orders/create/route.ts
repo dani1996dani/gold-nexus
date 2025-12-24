@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db';
 import { shippingSchema } from '@/lib/zod-schemas/shippingSchema';
 import { getUserIdFromToken } from '@/lib/jwt';
 
+import { stripe } from '@/lib/stripe';
+
 const cartItemSchema = z.object({
   id: z.string().uuid(),
   quantity: z.number().min(1),
@@ -13,18 +15,6 @@ const orderCreationSchema = z.object({
   shippingAddress: shippingSchema,
   cartItems: z.array(cartItemSchema).min(1),
 });
-
-// Stub for Stripe Checkout Session creation
-async function createStripeCheckoutSession(order: any, user: any) {
-  // TODO: MILESTONE 4 - Implement actual Stripe Checkout Session creation
-  console.log(`[STUB] Creating Stripe Checkout Session for Order ID: ${order.id}`);
-  const mockCheckoutUrl = `/checkout/success?orderId=${order.id}`;
-
-  return {
-    url: mockCheckoutUrl,
-    stripeSessionId: `mock_stripe_session_${new Date().getTime()}`,
-  };
-}
 
 export async function POST(req: NextRequest) {
   // 1. Corrected Authentication Guard
@@ -74,7 +64,23 @@ export async function POST(req: NextRequest) {
       return acc + product.price.toNumber() * item.quantity;
     }, 0);
 
-    // 4. Create the Order in a Database Transaction
+    // 4. Create Stripe PaymentIntent
+    // Stripe expects amount in cents
+    const amountInCents = Math.round(totalAmount * 100);
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amountInCents,
+      currency: 'usd',
+      metadata: {
+        userId: userId,
+        userEmail: user.email,
+      },
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    // 5. Create the Order in a Database Transaction
     const orderItemsCreateData = cartItems.map((item) => {
       const product = productsFromDb.find((p) => p.id === item.id)!;
       return {
@@ -90,32 +96,23 @@ export async function POST(req: NextRequest) {
           userId,
           totalAmount,
           shippingAddressJson: { ...shippingAddress, country: shippingAddress.country?.name ?? '' },
-          status: 'PENDING',
+          status: 'UNPAID',
+          stripePaymentIntentId: paymentIntent.id,
           items: {
             create: orderItemsCreateData,
-          },
-        },
-        include: {
-          items: {
-            include: {
-              product: true,
-            },
           },
         },
       });
       return order;
     });
 
-    // 5. Prepare for Stripe (Milestone 4)
-    const stripeSession = await createStripeCheckoutSession(newOrder, user);
-
-    // TODO: MILESTONE 4 - Update the order with the real Stripe Session ID
-    console.log(
-      `[STUB] Would update Order ${newOrder.id} with Stripe Session ID: ${stripeSession.stripeSessionId}`
-    );
-
+    // 6. Return clientSecret for frontend
     return NextResponse.json(
-      { orderId: newOrder.id, displayId: newOrder.displayId, checkoutUrl: stripeSession.url },
+      {
+        orderId: newOrder.id,
+        displayId: newOrder.displayId,
+        clientSecret: paymentIntent.client_secret,
+      },
       { status: 201 }
     );
   } catch (error) {

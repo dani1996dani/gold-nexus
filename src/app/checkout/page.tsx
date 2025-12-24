@@ -22,9 +22,23 @@ import { toast } from 'sonner';
 import { useAuthStore } from '@/lib/store/auth';
 import { authFetch } from '@/lib/auth-fetch';
 
+import { Elements } from '@stripe/react-stripe-js';
+import { getStripe } from '@/lib/utils/stripe-client';
+import { CheckoutPaymentForm } from '@/components/cart/CheckoutPaymentForm';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+
 export default function CheckoutPage() {
   const [isHydrated, setIsHydrated] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderData, setOrderData] = useState<{ orderId: string; clientSecret: string } | null>(
+    null
+  );
   const { items } = useCartStore();
   const { isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
 
@@ -32,31 +46,42 @@ export default function CheckoutPage() {
     setIsHydrated(true);
   }, []);
 
-  // Show skeleton while checking auth status OR rehydrating the cart
-  // Also show skeleton (or spinner) if order was just placed to prevent "Empty Cart" flash during redirect
   if (isAuthLoading || !isHydrated || orderPlaced) {
     return <CheckoutSkeleton />;
   }
 
-  // If cart is empty, show the empty state regardless of auth status
-  if (isHydrated && items.length === 0) {
+  // Only show EmptyCart if no items AND we aren't currently in the payment step
+  if (isHydrated && items.length === 0 && !orderData) {
     return <EmptyCart />;
   }
 
-  // If cart has items but user is not logged in, show the login prompt
   if (!isLoggedIn) {
     return <PleaseLogin />;
   }
 
-  // If all checks pass, render the actual checkout form
-  return <CheckoutForm onOrderPlaced={() => setOrderPlaced(true)} />;
+  return (
+    <CheckoutForm
+      orderData={orderData}
+      setOrderData={setOrderData}
+      onOrderPlaced={() => setOrderPlaced(true)}
+    />
+  );
 }
 
 // --- SUB-COMPONENTS ---
 
-const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
+const CheckoutForm = ({
+  onOrderPlaced,
+  orderData,
+  setOrderData,
+}: {
+  onOrderPlaced: () => void;
+  orderData: { orderId: string; clientSecret: string } | null;
+  setOrderData: (data: { orderId: string; clientSecret: string } | null) => void;
+}) => {
   const { items } = useCartStore();
   const [isProcessing, setIsProcessing] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -64,19 +89,14 @@ const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
     formState: { errors },
   } = useForm<ShippingFormValues>({
     resolver: zodResolver(shippingSchema),
-    // You can set default values here if needed
   });
 
   const subtotal = items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0);
   const total = subtotal;
 
-  const { clearCart } = useCartStore.getState();
-  const router = useRouter();
-
-  const onConfirmAndPay = async (data: ShippingFormValues) => {
+  const onCreateOrder = async (data: ShippingFormValues) => {
     setIsProcessing(true);
     try {
-      // Normalize the data on the frontend before sending
       const payload = {
         shippingAddress: {
           ...data,
@@ -94,189 +114,233 @@ const CheckoutForm = ({ onOrderPlaced }: { onOrderPlaced: () => void }) => {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.message || 'Payment processing failed');
+        throw new Error(error.message || 'Failed to initialize order');
       }
 
-      const { orderId } = await res.json();
-
-      // Prevent "Empty Cart" flash by setting this state first
-      onOrderPlaced();
-
-      clearCart();
-      router.push(`/order-confirmation/${orderId}`);
-      toast.success('Order placed successfully!');
+      const { orderId, clientSecret } = await res.json();
+      setOrderData({ orderId, clientSecret });
     } catch (error: any) {
-      toast.error(error.message || 'Failed to process payment. Please try again.');
+      toast.error(error.message || 'Failed to process order. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
+
   return (
     <div className="min-h-screen w-full bg-[#F9F9F9] px-4 py-12 sm:px-6 lg:px-8">
       <main className="mx-auto max-w-6xl">
         <h1 className="mb-8 font-serif text-4xl font-medium text-black sm:text-5xl">Checkout</h1>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
-          <Card className="border-neutral-200 bg-white shadow-none">
-            <CardHeader>
-              <CardTitle className="font-sans text-xl font-semibold">
-                Shipping Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form
-                id="shipping-form"
-                onSubmit={handleSubmit(onConfirmAndPay)}
-                className="space-y-6"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="full-name">Full Name</Label>
-                  <Input
-                    id="full-name"
-                    placeholder="John Smith"
-                    {...register('fullName')}
-                    className="rounded-md border-neutral-300"
-                  />
-                  {errors.fullName && (
-                    <p className="text-sm text-red-500">{errors.fullName.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    placeholder="123 Main Street"
-                    {...register('address')}
-                    className="rounded-md border-neutral-300"
-                  />
-                  {errors.address && (
-                    <p className="text-sm text-red-500">{errors.address.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="apartment">Apartment / Suite (optional)</Label>
-                  <Input
-                    id="apartment"
-                    placeholder="Apt 4B"
-                    {...register('apartment')}
-                    className="rounded-md border-neutral-300"
-                  />
-                </div>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {/* 1. SHIPPING INFO (Order 2 on mobile, Order 1 on desktop) */}
+          <div className="order-2 space-y-8 lg:order-1">
+            <Card className="border-neutral-200 bg-white shadow-none">
+              <CardHeader>
+                <CardTitle className="font-sans text-xl font-semibold">
+                  Shipping Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form
+                  id="shipping-form"
+                  onSubmit={handleSubmit(onCreateOrder)}
+                  className="space-y-6"
+                >
                   <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
+                    <Label htmlFor="full-name">Full Name</Label>
                     <Input
-                      id="city"
-                      placeholder="New York"
-                      {...register('city')}
+                      id="full-name"
+                      placeholder="John Smith"
+                      {...register('fullName')}
                       className="rounded-md border-neutral-300"
                     />
-                    {errors.city && <p className="text-sm text-red-500">{errors.city.message}</p>}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="country">Country</Label>
-                    <Controller
-                      name="country"
-                      control={control}
-                      render={({ field }) => (
-                        <CountryDropdown
-                          onChange={(country: Country) => field.onChange(country)}
-                          value={field.value || undefined}
-                        />
-                      )}
-                    />
-                    {errors.country && (
-                      <p className="text-sm text-red-500">
-                        {typeof errors.country.message === 'string'
-                          ? errors.country.message
-                          : 'Please select a country'}
-                      </p>
+                    {errors.fullName && (
+                      <p className="text-sm text-red-500">{errors.fullName.message}</p>
                     )}
                   </div>
-                </div>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="state">State / Province</Label>
+                    <Label htmlFor="address">Address</Label>
                     <Input
-                      id="state"
-                      placeholder="NY"
-                      {...register('state')}
+                      id="address"
+                      placeholder="123 Main Street"
+                      {...register('address')}
                       className="rounded-md border-neutral-300"
                     />
-                    {errors.state && <p className="text-sm text-red-500">{errors.state.message}</p>}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="postal-code">Postal Code</Label>
-                    <Input
-                      id="postal-code"
-                      placeholder="10001"
-                      {...register('postalCode')}
-                      className="rounded-md border-neutral-300"
-                    />
-                    {errors.postalCode && (
-                      <p className="text-sm text-red-500">{errors.postalCode.message}</p>
+                    {errors.address && (
+                      <p className="text-sm text-red-500">{errors.address.message}</p>
                     )}
                   </div>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          <Card className="border-neutral-200 bg-white shadow-none">
-            <CardHeader>
-              <CardTitle className="font-sans text-xl font-semibold">Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex flex-col items-start justify-between gap-4 border-b border-gray-50 pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:gap-0"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border bg-gray-100">
-                        <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-neutral-500">Qty: {item.quantity}</p>
-                      </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="apartment">Apartment / Suite (optional)</Label>
+                    <Input
+                      id="apartment"
+                      placeholder="Apt 4B"
+                      {...register('apartment')}
+                      className="rounded-md border-neutral-300"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="city">City</Label>
+                      <Input
+                        id="city"
+                        placeholder="New York"
+                        {...register('city')}
+                        className="rounded-md border-neutral-300"
+                      />
+                      {errors.city && <p className="text-sm text-red-500">{errors.city.message}</p>}
                     </div>
-                    <p className="font-semibold sm:text-right">
-                      {formatCurrency(Number(item.price) * item.quantity)}
-                    </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="country">Country</Label>
+                      <Controller
+                        name="country"
+                        control={control}
+                        render={({ field }) => (
+                          <CountryDropdown
+                            onChange={(country: Country) => field.onChange(country)}
+                            value={field.value || undefined}
+                          />
+                        )}
+                      />
+                      {errors.country && (
+                        <p className="text-sm text-red-500">
+                          {typeof errors.country.message === 'string'
+                            ? errors.country.message
+                            : 'Please select a country'}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                ))}
-              </div>
-              <Separator />
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm text-neutral-600">
-                  <span>Subtotal</span>
-                  <span>{formatCurrency(subtotal)}</span>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="state">State / Province</Label>
+                      <Input
+                        id="state"
+                        placeholder="NY"
+                        {...register('state')}
+                        className="rounded-md border-neutral-300"
+                      />
+                      {errors.state && (
+                        <p className="text-sm text-red-500">{errors.state.message}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="postal-code">Postal Code</Label>
+                      <Input
+                        id="postal-code"
+                        placeholder="10001"
+                        {...register('postalCode')}
+                        className="rounded-md border-neutral-300"
+                      />
+                      {errors.postalCode && (
+                        <p className="text-sm text-red-500">{errors.postalCode.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-black py-6 text-lg font-semibold text-white hover:bg-neutral-800"
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? 'Processing...' : 'Continue to Payment'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* 2. ORDER SUMMARY (Order 1 on mobile, Order 2 on desktop) */}
+          <div className="order-1 lg:order-2">
+            <Card className="border-neutral-200 bg-white shadow-none">
+              <CardHeader>
+                <CardTitle className="font-sans text-xl font-semibold">Order Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  {items.length > 0 ? (
+                    items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex flex-col items-start justify-between gap-4 border-b border-gray-50 pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:gap-0"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border bg-gray-100">
+                            <Image
+                              src={item.imageUrl}
+                              alt={item.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div>
+                            <p className="font-medium">{item.name}</p>
+                            <p className="text-sm text-neutral-500">Qty: {item.quantity}</p>
+                          </div>
+                        </div>
+                        <p className="font-semibold sm:text-right">
+                          {formatCurrency(Number(item.price) * item.quantity)}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-sm text-neutral-500">
+                      Items ready for secure checkout.
+                    </p>
+                  )}
                 </div>
-                <div className="flex justify-between text-sm text-neutral-600">
-                  <span>Shipping</span>
-                  <span>Free</span>
+                <Separator />
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm text-neutral-600">
+                    <span>Subtotal</span>
+                    <span>{formatCurrency(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-neutral-600">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                  </div>
                 </div>
-              </div>
-              <Separator />
-              <div className="flex items-center justify-between text-lg font-bold">
-                <span>Total</span>
-                <span>{formatCurrency(total)}</span>
-              </div>
-              <Button
-                form="shipping-form"
-                type="submit"
-                size="lg"
-                className="w-full rounded-md bg-black font-semibold text-white hover:bg-neutral-800"
-                disabled={isProcessing}
-              >
-                <Lock className="mr-2 h-4 w-4" />
-                {isProcessing ? 'Processing...' : 'Confirm and Pay'}
-              </Button>
-            </CardContent>
-          </Card>
+                <Separator />
+                <div className="flex items-center justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span>{formatCurrency(total)}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
+
+      {/* 3. PAYMENT DIALOG (POPUP) */}
+      <Dialog open={!!orderData} onOpenChange={(open) => !open && setOrderData(null)}>
+        <DialogContent className="max-w-md overflow-hidden border-none bg-white p-0 shadow-2xl outline-none sm:rounded-lg">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="font-serif text-2xl">Complete Your Order</DialogTitle>
+            <DialogDescription>
+              Complete your order for{' '}
+              <span className="font-semibold text-black">{formatCurrency(total)}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-6">
+            {orderData && (
+              <Elements
+                stripe={getStripe()}
+                options={{
+                  clientSecret: orderData.clientSecret,
+                  appearance: {
+                    theme: 'stripe',
+                    variables: {
+                      colorPrimary: '#000000',
+                      borderRadius: '8px',
+                    },
+                  },
+                }}
+              >
+                <CheckoutPaymentForm orderId={orderData.orderId} />
+              </Elements>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

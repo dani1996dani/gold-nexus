@@ -210,7 +210,13 @@ async function main() {
         },
       });
 
-      const orderStatus = faker.helpers.arrayElement(['COMPLETED', 'PROCESSING', 'PENDING']);
+      const orderStatus = faker.helpers.arrayElement([
+        'UNPAID',
+        'PAID',
+        'PROCESSING',
+        'SHIPPED',
+        'COMPLETED',
+      ]);
       const randomProduct = faker.helpers.arrayElement(productsInDb);
 
       orderPromises.push(

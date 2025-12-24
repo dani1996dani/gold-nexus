@@ -238,8 +238,8 @@ export default function MyAccountPage() {
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="text-xs uppercase text-neutral-500">Order ID</TableHead>
                       <TableHead className="text-xs uppercase text-neutral-500">Date</TableHead>
-                      <TableHead className="text-xs uppercase text-neutral-500">Total</TableHead>
                       <TableHead className="text-xs uppercase text-neutral-500">Status</TableHead>
+                      <TableHead className="text-xs uppercase text-neutral-500">Total</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -253,13 +253,13 @@ export default function MyAccountPage() {
                         <TableCell className="text-neutral-600">
                           {formatDate(order.createdAt)}
                         </TableCell>
-                        <TableCell className="font-bold">
-                          {formatCurrency(Number(order.totalAmount))}
-                        </TableCell>
                         <TableCell>
                           <Badge variant={getOrderStatusVariant(order.status)}>
                             {order.status}
                           </Badge>
+                        </TableCell>
+                        <TableCell className="font-bold">
+                          {formatCurrency(Number(order.totalAmount))}
                         </TableCell>
                       </TableRow>
                     ))}

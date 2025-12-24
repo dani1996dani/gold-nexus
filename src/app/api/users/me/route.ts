@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getUserIdFromToken } from '@/lib/jwt';
 import { z } from 'zod';
+import { OrderStatus } from '@/generated/prisma/client';
 
 const updateProfileSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -31,6 +32,9 @@ export async function GET() {
         createdAt: true,
         updatedAt: true,
         orders: {
+          where: {
+            status: { not: OrderStatus.UNPAID },
+          },
           include: {
             items: {
               include: {
