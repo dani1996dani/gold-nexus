@@ -4,6 +4,7 @@ import { leadSchema } from '@/lib/zod-schemas/leadSchema';
 import { getLiveGoldPrice } from '@/lib/gold-price-service';
 import { ZodError } from 'zod';
 import { Karat } from '@/generated/prisma/client';
+import { sendLeadForwardingEmail } from '@/lib/email';
 
 // Simple in-memory cache for Karat data to avoid hitting the DB on every request.
 let karatCache: Karat[] | null = null;
@@ -53,15 +54,8 @@ export async function POST(req: Request) {
       },
     });
 
-    // --- Email Forwarding Stub ---
-    // TODO: Implement email forwarding once an email service (e.g., Resend, SendGrid) is configured.
-    console.log('--- STUB: Forwarding Lead to Partner ---');
-    console.log('Partner Email: partner@example.com');
-    console.log('Lead Details:', JSON.stringify(newLead, null, 2));
-    if (estimatedValue) {
-      console.log('Estimated Value:', estimatedValue.toFixed(2));
-    }
-    console.log('--- END STUB ---');
+    // --- Email Forwarding ---
+    await sendLeadForwardingEmail(newLead);
 
     return NextResponse.json(
       { message: 'Lead submitted successfully.', leadId: newLead.id },

@@ -21,6 +21,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - **Forms:** React Hook Form with Zod for validation.
 - **Client-Side State:** Zustand for global state (e.g., shopping cart).
 - **Authentication:** JWTs with RS256 signatures, stored in `httpOnly` cookies. Passwords are hashed with Argon2.
+- **Emails:** Resend (Node.js SDK).
 
 ## 4. Design Language
 
@@ -120,6 +121,16 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
   - `[ ]` Transactional email flows (e.g., order confirmation).
   - `[ ]` Configure production cron job schedule (e.g., every 30 minutes).
   - `[ ]` Final production deployment hand-off.
+- `[ ]` **STATUS: IN PROGRESS**
+- `[x]` **Stripe Integration:** Embedded PaymentElement with Webhook sync (UNPAID -> PAID).
+- `[ ]` **Email Notifications:**
+  - `[ ]` Internal Notification: New Order (Paid) sent to Admin.
+  - `[ ]` Internal Notification: New Lead Forwarding sent to Partner.
+- `[ ]` **Forgot Password Flow:** Secure reset token via email.
+- `[ ]` **Technical Documentation:** `TECHNICAL_DOCS.md` for API and setup.
+- `[ ]` **Final Production Hand-off:**
+  - `[ ]` Configure production environment variables.
+  - `[ ]` **CRITICAL:** Set up Vercel Cron Job (or external like cron-job.org) for gold price updates (30 min interval). _Note: Vercel native crons < 1 day require Pro plan._
 
 ## 6. Authentication Architecture
 

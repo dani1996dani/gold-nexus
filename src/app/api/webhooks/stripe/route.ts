@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/db';
 import Stripe from 'stripe';
+import { sendOrderNotificationEmail } from '@/lib/email';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -28,11 +31,22 @@ export async function POST(req: NextRequest) {
 
       // Update the order in our database
       try {
-        await prisma.order.update({
+        const updatedOrder = await prisma.order.update({
           where: { stripePaymentIntentId: paymentIntent.id },
           data: { status: 'PAID' },
+          include: {
+            user: {
+              select: {
+                fullName: true,
+                email: true,
+              },
+            },
+          },
         });
         console.log(`Order updated to PAID for PI: ${paymentIntent.id}`);
+
+        // Trigger notification email to Admin
+        await sendOrderNotificationEmail(updatedOrder);
       } catch (dbError) {
         console.error('Failed to update order status after successful payment:', dbError);
         // We return a 200 here because Stripe will keep retrying if we return an error,
