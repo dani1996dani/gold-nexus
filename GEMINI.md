@@ -41,7 +41,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 ### MILESTONE 2: Frontend Architecture & Full UI
 
 - `[x]` **STATUS: DELIVERED & PAID**
-- `[x]` Login & Registration Pages UI (with React Hook Form + Zod)
+- `[x]` Login & Registration Pages UI
 - `[x]` User Profile / "My Account" Page UI
 - `[x]` "Sell Your Gold" Form Page UI
 - `[x]` Shopping Cart (Slide-Out Sheet) UI
@@ -52,93 +52,29 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 ### MILESTONE 3: Full Backend Logic, Security & Full DB Logic
 
 - `[x]` **STATUS: DELIVERED & PAID**
-- `[x]` **Database Setup:**
-  - `[x]` Full Prisma schema defined for all models.
-  - `[x]` Local Docker environment is functional.
-  - `[x]` Supabase staging environment is configured.
-  - `[x]` Professional deployment pipeline is set up (Vercel build script, `postinstall`, `dotenv-cli` for staging scripts).
-- `[x]` **Authentication Backend:**
-  - `[x]` `POST /api/auth/register` (with auto-login).
-  - `[x]` `POST /api/auth/login`.
-  - `[x]` `POST /api/auth/refresh`.
-  - `[x]` `POST /api/auth/logout`.
-- `[x]` **Dynamic Data Fetching:**
-  - `[x]` `GET /api/products` for marketplace page.
-  - `[x]` `GET /api/products/[sku]` for product detail page.
-  - `[x]` `GET /api/users/me` for user profile page.
-  - `[x]` Homepage "Featured Products" is dynamic.
-- `[x]` **Functional Shopping Cart (Client-Side):**
-  - `[x]` Zustand store created.
-  - `[x]` "Add to Order" button works.
-  - `[x]` Cart sheet reads from the store and is fully interactive (update quantity, remove).
-- `[x]` **Create an Order (Checkout Process):**
-  - `[x]` Build `POST /api/orders/create` endpoint to save cart contents to the database.
-- `[x]` **Conditional Navbar UI:**
-  - `[x]` Show "My Account" / "Logout" if authenticated, otherwise show "Login".
-- `[x]` **skeletons for pages with data**
-  - `[x]` make a report on all pages that need a few secs to load and add loading state for them.
-- `[x]` **marketplace filtering and sorting**
-  - `[x]` support filtering and sorting the marketplace via the api.
-- `[x]` **Live Gold Price Module (API):**
-  - `[x]` Build `GET /api/gold-price` endpoint. https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD
-- `[x]` **"Sell Gold" Form Submission (API):**
-  - `[x]` Build `POST /api/leads` endpoint and connect the frontend form.
-- `[x]` **Admin Panel Backend APIs & Frontend pages:**
-  - `[x]` Product Management (Create, Update, Bulk Import).
-  - `[x]` Order Management (View all orders).
-  - `[x]` Lead Management (View all leads).
-  - `[x]` make navbar options for admin to navigate to admin panel. (only if admin)
-  - `[x]` lead management page is BROKEN on mobile view. think if need to fix (Skipped for MVP - Desktop first)
-  - `[x]` fix race condition of detecting if user is admin or not and showing the "access denied" page.
-  - `[x]` show loading skeleton for 3 tables, and 3 [id] pages in admin panel. in stg, the wait is about 1-2 seconds. the "loading x" text is ugly. a simple skelton will do.
-  - `[x]` (get rid of update status in leads page, and do it in the field like order management)
-- `[x]` **Error display in FE:**
-  - `[x]` Make all errors show a toast instead of alerts or console logs etc
-  - `[x]` Country dropdown validation text in checkout is horrible, need custom text. (maybe needed in all places with country dropdown)
-- `[x]` **Editable User Profile:**
-  - `[x]` Build `PUT /api/users/me` endpoint and enable the "Save Changes" form.
-- `[x]` add pagination (infi scroll) in live market (probably needs some BE work as well)
-- `[x]` **create a custom 404 page?**
-- `[x]` **admin panel is seen on mobile in navbar but im fully locked out on mobile?? no matter how much i refresh??**
-- `[x]` **fix gold price. it barely updates. maybe set up a cron job on cron-job.org?**
-- `[x]` **navbar - buy gold and sell gold are not visually aligned to the page.. fix it**
-- `[x]` **create detailed order page for customer**
+- `[x]` **Database Setup:** Prisma models, local Docker, Supabase Staging.
+- `[x]` **Authentication:** RS256 JWTs, rolling sessions, authFetch interceptor.
+- `[x]` **Dynamic Data:** Products, Orders, Users, Leads APIs.
+- `[x]` **Order Flow:** Status lifecycle (UNPAID -> PAID -> PROCESSING -> SHIPPED -> COMPLETED).
+- `[x]` **Admin Panel:** Product management, Order management, Lead management.
+- `[x]` **Bug Fixes:** Mobile access race conditions, scroll-to-top issues, footer redesign.
 
 ### MILESTONE 4: Stripe, Emails & Full Deployment
 
 - `[ ]` **STATUS: IN PROGRESS**
-- `[x]` **Stripe Backend Infrastructure:**
-  - `[x]` Initialize Stripe SDK (`src/lib/stripe.ts`).
-  - `[x]` `POST /api/orders/create` generates PaymentIntent and returns `clientSecret`.
-  - `[x]` Webhook listener (`src/app/api/webhooks/stripe/route.ts`) handles `payment_intent.succeeded` and updates order status.
-- `[x]` **Stripe Frontend Integration:**
-  - `[x]` Embedded `PaymentElement` in Checkout flow.
-  - `[x]` Two-step Checkout: Shipping Info -> Secure Payment.
-  - `[x]` Success redirect to `/order-confirmation/[id]`.
-- `[ ]` **Remaining Tasks:**
-  - `[ ]` Configure staging and production Environment Variables (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`).
-  - `[x]` Local Webhook Testing: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
-  - `[ ]` Transactional email flows (e.g., order confirmation).
-  - `[ ]` Configure production cron job schedule (e.g., every 30 minutes).
-  - `[ ]` Final production deployment hand-off.
-- `[ ]` **STATUS: IN PROGRESS**
-- `[x]` **Stripe Integration:** Embedded PaymentElement with Webhook sync (UNPAID -> PAID).
-- `[ ]` **Email Notifications:**
-  - `[ ]` Internal Notification: New Order (Paid) sent to Admin.
-  - `[ ]` Internal Notification: New Lead Forwarding sent to Partner.
+- `[x]` **Stripe Integration:** Embedded PaymentElement with Webhook sync.
+- `[x]` **Email Notifications:**
+  - `[x]` New Order (Paid) sent to Admin (Resend).
+  - `[x]` New Lead Forwarding sent to Partner (Resend).
 - `[ ]` **Forgot Password Flow:** Secure reset token via email.
 - `[ ]` **Technical Documentation:** `TECHNICAL_DOCS.md` for API and setup.
 - `[ ]` **Final Production Hand-off:**
   - `[ ]` Configure production environment variables.
-  - `[ ]` **CRITICAL:** Set up Vercel Cron Job (or external like cron-job.org) for gold price updates (30 min interval). _Note: Vercel native crons < 1 day require Pro plan._
+  - `[ ]` **CRITICAL:** Set up Vercel Cron Job (or external like cron-job.org) for gold price updates (30 min interval).
 
 ## 6. Authentication Architecture
 
 - **Utility:** `authFetch` (from `@/lib/auth-fetch`) is the standard for all **client-side** API requests.
-- **Behavior:** It wraps the native `fetch`, automatically handling `401 Unauthorized` responses by:
-  1. Pausing the request.
-  2. Calling `/api/auth/refresh` to get a new Access Token & Refresh Token (Rolling Session).
-  3. Retrying the original request.
-  4. Redirecting to `/login` if the refresh fails.
+- **Behavior:** It wraps the native `fetch`, automatically handling `401 Unauthorized` responses by refreshing the token silently and retrying the request.
 - **Rule:** ALWAYS use `authFetch` instead of `fetch` in Client Components (`'use client'`).
-- **Exception:** Server Components (which run on Node.js) cannot use `authFetch` as they lack browser context (cookies/window). They continue to use native `fetch` or direct DB calls.
+- **Exception:** Server Components use native `fetch` or direct DB calls.

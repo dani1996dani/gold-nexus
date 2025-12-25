@@ -163,3 +163,55 @@ export async function sendLeadForwardingEmail(lead: any) {
     console.error('Unexpected error in sendLeadForwardingEmail:', err);
   }
 }
+
+/**
+ * Sends a secure password reset link to the user.
+ */
+export async function sendPasswordResetEmail(email: string, token: string) {
+  try {
+    const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
+
+    const { data, error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [email],
+      subject: 'Secure Password Reset Request',
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #eee; border-top: 4px solid #D4AF37;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="margin: 0; font-family: serif; color: #1a202c; letter-spacing: 1px;">GOLD NEXUS</h1>
+            <p style="margin: 5px 0 0; font-size: 12px; text-transform: uppercase; color: #D4AF37; font-weight: bold;">Institutional Trading Platform</p>
+          </div>
+
+          <h2 style="color: #1a202c; font-size: 20px; font-weight: 500; margin-bottom: 20px;">Password Reset Request</h2>
+          <p style="color: #4a5568; line-height: 1.6;">
+            We received a request to reset the password associated with your Gold Nexus account. 
+            <br/>Please click the button below to secure your account:
+          </p>
+          
+          <p style="margin-top: 35px; text-align: center;">
+            <a href="${resetLink}" 
+               style="background: #000; color: #fff; padding: 14px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">
+               Reset My Password
+            </a>
+          </p>
+
+          <div style="margin-top: 35px; padding: 20px; background: #f9f9f9; border-radius: 8px; text-align: center;">
+            <p style="margin: 0; font-size: 12px; color: #718096;">
+              This link will expire in 1 hour. If you did not request this, please ignore this email or contact our security desk if you have concerns.
+            </p>
+          </div>
+
+          <div style="margin-top: 40px; pt: 20px; border-top: 1px solid #eee; text-align: center; color: #a0aec0; font-size: 12px;">
+            <p>© 2025 Gold Nexus LLC. All Rights Reserved.</p>
+          </div>
+        </div>
+      `,
+    });
+
+    if (error) {
+      console.error('Error sending password reset email:', error);
+    }
+  } catch (err) {
+    console.error('Unexpected error in sendPasswordResetEmail:', err);
+  }
+}
