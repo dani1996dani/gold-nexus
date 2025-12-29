@@ -5,7 +5,15 @@ import { headers } from 'next/headers';
 // This is the new endpoint for the cron job to call.
 // It is protected by the 'x-vercel-cron-secret' header,
 // which is automatically sent by Vercel's cron service.
+export async function GET() {
+  return handleUpdate();
+}
+
 export async function POST() {
+  return handleUpdate();
+}
+
+async function handleUpdate() {
   const headersList = await headers();
   const cronSecretHeader = headersList.get('x-vercel-cron-secret');
   const authHeader = headersList.get('authorization');
