@@ -1,32 +1,22 @@
 export const PrivacyContent = () => (
   <div className="prose prose-neutral max-w-none">
-    <p className="lead">Last Updated: December 10, 2025</p>
+    <p className="lead">Last Updated: December 28, 2025</p>
     <p>
-      Gold Nexus LLC (&#34;we&#34;, &#34;us&#34;, or &#34;our&#34;) is committed to protecting your
-      privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your
-      information when you use our website and services.
+      Gold Nexus respects your privacy and is committed to protecting your personal information.
     </p>
-
-    <h2>1. Information We Collect</h2>
     <p>
-      We may collect personal information from you such as your name, email address, phone number,
-      and shipping address when you register for an account, place an order, or submit a lead.
+      We collect only the information necessary to provide our services, respond to inquiries,
+      process transactions, and comply with legal and regulatory obligations. This may include
+      contact details and transaction-related information.
     </p>
-
-    <h2>2. How We Use Your Information</h2>
-    <p>We use the information we collect to:</p>
-    <ul>
-      <li>Create and manage your account.</li>
-      <li>Process your transactions and fulfill orders.</li>
-      <li>Communicate with you about your account or orders.</li>
-      <li>Comply with legal and regulatory requirements.</li>
-    </ul>
-
-    <h2>3. Data Security</h2>
     <p>
-      We implement a variety of security measures to maintain the safety of your personal
-      information. Your personal information is contained behind secured networks and is only
-      accessible by a limited number of persons who have special access rights to such systems.
+      Personal information is not sold or shared with third parties, except where required by law,
+      regulatory authorities, or trusted service providers involved in operating the platform under
+      confidentiality obligations.
+    </p>
+    <p>
+      Reasonable administrative, technical, and organizational measures are implemented to protect
+      personal data from unauthorized access, disclosure, or misuse.
     </p>
   </div>
 );

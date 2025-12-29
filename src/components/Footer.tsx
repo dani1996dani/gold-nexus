@@ -82,6 +82,11 @@ export const Footer = () => {
                     Terms & Conditions
                   </Link>
                 </li>
+                <li>
+                  <Link href="/info/refund-policy" className="hover:text-white">
+                    Refund & Return Policy
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -156,6 +161,11 @@ export const Footer = () => {
                     Help Center & FAQ
                   </Link>
                 </li>
+                <li>
+                  <Link href="/info/contact" className="hover:text-white">
+                    Contact Us
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -214,6 +224,9 @@ export const Footer = () => {
               <Link href="/marketplace" className="hover:text-white">
                 Services
               </Link>
+              <Link href="/info/contact" className="hover:text-white">
+                Contact
+              </Link>
             </div>
 
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-3">
@@ -236,6 +249,10 @@ export const Footer = () => {
               <span>•</span>
               <Link href="/info/compliance" className="hover:text-white">
                 Compliance
+              </Link>
+              <span>•</span>
+              <Link href="/info/refund-policy" className="hover:text-white">
+                Refunds
               </Link>
             </div>
           </div>

@@ -1,4 +1,9 @@
 import React from 'react';
+import { TermsContent } from './info-pages-content/TermsContent';
+import { PrivacyContent } from './info-pages-content/PrivacyContent';
+import { RefundContent } from './info-pages-content/RefundContent';
+import { ShippingContent } from './info-pages-content/ShippingContent';
+import { ContactContent } from './info-pages-content/ContactContent';
 
 interface PageContent {
   title: string;
@@ -29,6 +34,10 @@ export const pages: Record<string, PageContent> = {
     title: 'FAQ & Knowledge Base',
     content: <PlaceholderContent title="FAQ" />,
   },
+  contact: {
+    title: 'Contact Information',
+    content: <ContactContent />,
+  },
 
   // Company Slugs
   'about-us': {
@@ -44,12 +53,12 @@ export const pages: Record<string, PageContent> = {
     content: <PlaceholderContent title="Platform Guide" />,
   },
   terms: {
-    title: 'Terms & Conditions',
-    content: <PlaceholderContent title="Terms & Conditions" />,
+    title: 'Terms of Service',
+    content: <TermsContent />,
   },
   privacy: {
     title: 'Privacy Policy',
-    content: <PlaceholderContent title="Privacy Policy" />,
+    content: <PrivacyContent />,
   },
   compliance: {
     title: 'Compliance & Regulation',
@@ -59,6 +68,10 @@ export const pages: Record<string, PageContent> = {
     title: 'AML / KYC Policy',
     content: <PlaceholderContent title="AML / KYC Policies" />,
   },
+  'refund-policy': {
+    title: 'Refund & Return Policy',
+    content: <RefundContent />,
+  },
 
   // Services Slugs
   'verified-sellers': {
@@ -66,12 +79,12 @@ export const pages: Record<string, PageContent> = {
     content: <PlaceholderContent title="Verified Sellers Network" />,
   },
   shipping: {
-    title: 'Secure Global Shipping',
-    content: <PlaceholderContent title="Shipping & Logistics" />,
+    title: 'Shipping & Insurance Policy',
+    content: <ShippingContent />,
   },
   insurance: {
-    title: 'Insurance & Buyer Protection',
-    content: <PlaceholderContent title="Insurance Program" />,
+    title: 'Shipping & Insurance Policy',
+    content: <ShippingContent />,
   },
   'live-price': {
     title: 'Live Gold Price Data',
@@ -93,7 +106,7 @@ export const pages: Record<string, PageContent> = {
   },
   'buyer-protection': {
     title: 'Insurance & Buyer Protection',
-    content: <PlaceholderContent title="Buyer Protection" />,
+    content: <ShippingContent />,
   },
   'global-checkout': {
     title: 'Seamless Global Checkout',

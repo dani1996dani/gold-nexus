@@ -66,7 +66,7 @@ Build and deliver a Phase A MVP for Gold Nexus LLC, a global digital platform fo
 - `[x]` **Email Notifications:**
   - `[x]` New Order (Paid) sent to Admin (Resend).
   - `[x]` New Lead Forwarding sent to Partner (Resend).
-- `[ ]` **Forgot Password Flow:** Secure reset token via email.
+- `[x]` **Forgot Password Flow:** Secure reset token via email.
 - `[ ]` **Technical Documentation:** `TECHNICAL_DOCS.md` for API and setup.
 - `[ ]` **Final Production Hand-off:**
   - `[ ]` Configure production environment variables.
