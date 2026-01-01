@@ -15,7 +15,7 @@
     "prisma:studio": "npx prisma studio",
     "db:seed": "npx prisma db seed",
     "postinstall": "prisma generate",
-    "// --- Staging (Supabase) DB Scripts ---": "",
+    "// --- Staging and Production (Supabase) DB Scripts ---": "",
     "db:migrate:stg": "dotenv -e .env.staging -- sh -c 'DATABASE_URL=\"$DATABASE_SEED_AND_MIGRATION_URL\" prisma migrate deploy'",
     "db:seed:stg": "dotenv -e .env.staging -- sh -c 'DATABASE_URL=\"$DATABASE_SEED_AND_MIGRATION_URL\" tsx prisma/seed.ts'",
     "db:seed:prod": "dotenv -e .env.prod -- sh -c 'DATABASE_URL=\"$DATABASE_SEED_AND_MIGRATION_URL\" tsx prisma/seed-prod.ts'",
