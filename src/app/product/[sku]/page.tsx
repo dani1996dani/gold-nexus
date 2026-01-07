@@ -52,7 +52,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         <div>
           <h1 className="font-serif text-4xl font-medium text-foreground">{product.name}</h1>
           {/* Use the description from the database */}
-          <p className="mt-4 text-muted-foreground">{product.description}</p>
+          <p className="mt-4 whitespace-pre-wrap text-muted-foreground">{product.description}</p>
 
           {/* SPECIFICATIONS BOX */}
           <div className="mt-8 rounded-lg bg-secondary/30 p-6">
@@ -94,9 +94,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <AccordionTrigger className="font-serif text-lg">
               Full Product Description
             </AccordionTrigger>
-            <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-              {/* Use the database description here as well */}
-              <p>{product.description}</p>
+            <AccordionContent className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+              {product.description}
             </AccordionContent>
           </AccordionItem>
 
