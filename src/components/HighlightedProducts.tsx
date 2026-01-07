@@ -49,11 +49,15 @@ export const HighlightedProducts = async () => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-wrap justify-center gap-6">
           {/* 3. Map over the real, fetched products */}
           {products.map((product) => (
-            // Use the unique product.id for the key, which is more reliable than the name
-            <ProductCard key={product.id} product={product} />
+            <div
+              key={product.id}
+              className="w-full max-w-[320px] sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]"
+            >
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       </div>
