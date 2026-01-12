@@ -7,7 +7,7 @@ const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'bbaron.daniel@gmail
 const PARTNER_EMAIL = process.env.PARTNER_LEAD_EMAIL || 'bbaron.daniel@gmail.com';
 
 // From address (Resend requires a verified domain in production, but lets you use 'onboarding@resend.dev' for testing)
-const FROM_EMAIL = 'Gold Nexus <onboarding@resend.dev>';
+const FROM_EMAIL = 'Gold Nexus <info@goldnexus.net>';
 
 /**
  * Notifies the Admin about a new successful (Paid) order.
